@@ -39,9 +39,9 @@ Guardian Teal"""
 # PAGE
 # ==========================
 
-st.set_page_config(page_title="WooCommerce CSV Generator")
+st.set_page_config(page_title="MPO/MELI nwe product csv")
 
-st.title("WooCommerce CSV Generator")
+st.title("MPO/MELI nwe product csv")
 
 # ==========================
 # INPUT
