@@ -39,9 +39,9 @@ Guardian Teal"""
 # PAGE
 # ==========================
 
-st.set_page_config(page_title="MPO/MELI nwe product csv")
+st.set_page_config(page_title="MPO/MELI nwe product CSV")
 
-st.title("MPO/MELI nwe product csv")
+st.title("MPO/MELI nwe product CSV")
 
 # ==========================
 # INPUT
@@ -50,7 +50,7 @@ st.title("MPO/MELI nwe product csv")
 parent_id = st.number_input(
     "Parent ID",
     min_value=1,
-    step=1
+    step=1000
 )
 
 product_name = st.text_input(
