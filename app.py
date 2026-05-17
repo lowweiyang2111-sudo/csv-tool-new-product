@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from io import BytesIO
 
 # ==========================
 # FIXED VALUES
@@ -36,7 +35,11 @@ Guardian Khaki, Guardian Light Grey,
 Guardian Navy Blue, Guardian Peach,
 Guardian Teal"""
 
-st.set_page_config(page_title="CSV Product Generator")
+# ==========================
+# PAGE
+# ==========================
+
+st.set_page_config(page_title="WooCommerce CSV Generator")
 
 st.title("WooCommerce CSV Generator")
 
@@ -54,10 +57,28 @@ product_name = st.text_input(
     "Product Name"
 )
 
+visibility = st.radio(
+    "Visibility",
+    ["Public", "Private"]
+)
+
+product_description = st.text_area(
+    "Product Description",
+    height=200
+)
+
+published_value = (
+    1
+    if visibility == "Public"
+    else 0
+)
+
 st.subheader("Sizes & West Malaysia Price")
 
 if "sizes" not in st.session_state:
-    st.session_state.sizes = [{"size": "", "price": 0}]
+    st.session_state.sizes = [
+        {"size": "", "price": 0}
+    ]
 
 for i, item in enumerate(st.session_state.sizes):
 
@@ -85,13 +106,15 @@ for i, item in enumerate(st.session_state.sizes):
     }
 
 if st.button("+ Add Size"):
-    st.session_state.sizes.append({
-        "size": "",
-        "price": 0
-    })
+    st.session_state.sizes.append(
+        {
+            "size": "",
+            "price": 0
+        }
+    )
 
 # ==========================
-# GENERATE
+# GENERATE CSV
 # ==========================
 
 if st.button("Generate CSV"):
@@ -104,41 +127,61 @@ if st.button("Generate CSV"):
         if s["size"].strip()
     ]
 
+    # ==========================
+    # PARENT ROW
+    # ==========================
+
     parent_row = {
         "ID": parent_id,
         "Type": "variable",
         "SKU": "",
         "Name": product_name,
-        "Published": 1,
+        "Description": product_description,
+        "Published": published_value,
         "Parent": "",
 
         "Attribute 1 name": "seater",
-        "Attribute 1 value(s)": "|".join(size_list),
+        "Attribute 1 value(s)":
+            "|".join(size_list),
 
-        "Attribute 2 name": "shipping",
-        "Attribute 2 value(s)": "West Malaysia|East Malaysia",
+        "Attribute 2 name":
+            "shipping",
+        "Attribute 2 value(s)":
+            "West Malaysia|East Malaysia",
 
-        "Attribute 3 name": "material",
-        "Attribute 3 value(s)": "fabric",
+        "Attribute 3 name":
+            "material",
+        "Attribute 3 value(s)":
+            "fabric",
 
-        "Attribute 4 name": "series",
-        "Attribute 4 value(s)": "easy clean",
+        "Attribute 4 name":
+            "series",
+        "Attribute 4 value(s)":
+            "easy clean",
 
-        "Attribute 5 name": "variety",
+        "Attribute 5 name":
+            "variety",
         "Attribute 5 value(s)":
             "FG66151|FG66252|FG66353|Guardian",
 
-        "Attribute 6 name": "color",
-        "Attribute 6 value(s)": COLOR_VALUES,
+        "Attribute 6 name":
+            "color",
+        "Attribute 6 value(s)":
+            COLOR_VALUES,
 
         "Regular price": "",
         "Stock": 10,
-        "Stock status": "instock"
+        "Stock status":
+            "instock"
     }
 
     rows.append(parent_row)
 
     current_id = parent_id + 1
+
+    # ==========================
+    # VARIATION ROWS
+    # ==========================
 
     for s in st.session_state.sizes:
 
@@ -165,41 +208,60 @@ if st.button("Generate CSV"):
                 )
 
                 row = {
-                    "ID": current_id,
-                    "Type": "variation",
-                    "SKU": "",
-                    "Name": product_name,
-                    "Published": 1,
+                    "ID":
+                        current_id,
+
+                    "Type":
+                        "variation",
+
+                    "SKU":
+                        "",
+
+                    "Name":
+                        product_name,
+
+                    "Description":
+                        product_description,
+
+                    "Published":
+                        published_value,
+
                     "Parent":
                         f"id:{parent_id}",
 
                     "Attribute 1 name":
                         "seater",
+
                     "Attribute 1 value(s)":
                         size,
 
                     "Attribute 2 name":
                         "shipping",
+
                     "Attribute 2 value(s)":
                         shipping,
 
                     "Attribute 3 name":
                         "material",
+
                     "Attribute 3 value(s)":
                         "fabric",
 
                     "Attribute 4 name":
                         "series",
+
                     "Attribute 4 value(s)":
                         "easy clean",
 
                     "Attribute 5 name":
                         "variety",
+
                     "Attribute 5 value(s)":
                         variety,
 
                     "Attribute 6 name":
                         "color",
+
                     "Attribute 6 value(s)":
                         "",
 
@@ -223,7 +285,9 @@ if st.button("Generate CSV"):
         encoding="utf-8-sig"
     )
 
-    st.success("CSV Generated!")
+    st.success(
+        "CSV Generated!"
+    )
 
     st.download_button(
         "Download CSV",
