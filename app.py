@@ -39,9 +39,9 @@ Guardian Teal"""
 # PAGE
 # ==========================
 
-st.set_page_config(page_title="MPO/MELI nwe product CSV")
+st.set_page_config(page_title="MPO/MELI new product CSV")
 
-st.title("MPO/MELI nwe product CSV")
+st.title("MPO/MELI new product CSV")
 
 # ==========================
 # INPUT
