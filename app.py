@@ -68,7 +68,7 @@ parent_id = st.number_input(
 )
 
 product_name = st.text_input(
-    "Product Name"
+    "Product Name",
     key="product_name"
 )
 
@@ -79,7 +79,7 @@ visibility = st.radio(
 
 product_description = st.text_area(
     "Product Description",
-    height=200
+    height=200,
     key="product_description"
 )
 
