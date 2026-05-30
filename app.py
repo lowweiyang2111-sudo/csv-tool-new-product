@@ -142,10 +142,14 @@ if bulk_input:
 # ==========================
 if st.button("Clear All"):
 
-    st.session_state.product_name = ""
-    st.session_state.product_description = ""
-    st.session_state.bulk_input = ""
-    st.session_state.parent_id = 1
+    for key in [
+        "product_name",
+        "product_description",
+        "bulk_input",
+        "parent_id"
+    ]:
+        if key in st.session_state:
+            del st.session_state[key]
 
     st.rerun()
     
