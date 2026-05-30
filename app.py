@@ -121,8 +121,7 @@ if st.button("Generate CSV"):
 
     size_list = [
         s["size"]
-        for s in sizes_data:
-        if s["size"].strip()
+        for s in sizes_data
     ]
 
     # ==========================
