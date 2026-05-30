@@ -39,9 +39,11 @@ Guardian Teal"""
 # PAGE
 # ==========================
 
-st.set_page_config(page_title="MPO/MELI new product CSV")
+st.set_page_config(
+    page_title="MPO/MELI New Product CSV"
+)
 
-st.title("MPO/MELI newa product CSV")
+st.title("MPO/MELI New Product CSV")
 
 # ==========================
 # INPUT
@@ -73,16 +75,18 @@ published_value = (
     else 0
 )
 
+# ==========================
+# BULK SIZE + PRICE
+# ==========================
+
 st.subheader("Paste Size & Price")
 
 bulk_input = st.text_area(
     "Paste Excel Size + Price",
     height=200,
     placeholder="""
-6FT    8799
-5FT    8199
-3.5FT  7599
-3FT    6999
+1MR (26")    3,790.00
+2MRR (26")   6,290.00
 """
 )
 
@@ -98,16 +102,17 @@ if bulk_input:
 
         if len(parts) >= 2:
 
-            size = parts[0]
-
             try:
-              price_text = (
-              parts[-1]
-              .replace(",", "")
-              .replace(".00", "")
-)
 
-price = int(price_text)
+                price_text = (
+                    parts[-1]
+                    .replace(",", "")
+                    .replace(".00", "")
+                )
+
+                price = int(price_text)
+
+                size = " ".join(parts[:-1])
 
                 sizes_data.append({
                     "size": size,
@@ -149,31 +154,38 @@ if st.button("Generate CSV"):
 
         "Attribute 2 name":
             "shipping",
+
         "Attribute 2 value(s)":
             "West Malaysia|East Malaysia",
 
         "Attribute 3 name":
             "material",
+
         "Attribute 3 value(s)":
             "fabric",
 
         "Attribute 4 name":
             "series",
+
         "Attribute 4 value(s)":
             "easy clean",
 
         "Attribute 5 name":
             "variety",
+
         "Attribute 5 value(s)":
             "FG66151|FG66252|FG66353|Guardian",
 
         "Attribute 6 name":
             "color",
+
         "Attribute 6 value(s)":
             COLOR_VALUES,
 
         "Regular price": "",
+
         "Stock": 10,
+
         "Stock status":
             "instock"
     }
@@ -188,11 +200,7 @@ if st.button("Generate CSV"):
 
     for s in sizes_data:
 
-        size = s["size"].strip()
-
-        if not size:
-            continue
-
+        size = s["size"]
         west_price = s["price"]
         east_price = west_price + 1000
 
@@ -288,14 +296,11 @@ if st.button("Generate CSV"):
         encoding="utf-8-sig"
     )
 
-    st.success(
-        "CSV Generated!"
-    )
+    st.success("CSV Generated!")
 
     st.download_button(
         "Download CSV",
         csv,
-        file_name=
-        f"{product_name}.csv",
+        file_name=f"{product_name}.csv",
         mime="text/csv"
     )
