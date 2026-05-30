@@ -41,7 +41,7 @@ Guardian Teal"""
 
 st.set_page_config(page_title="MPO/MELI new product CSV")
 
-st.title("MPO/MELI new product CSV")
+st.title("MPO/MELI newa product CSV")
 
 # ==========================
 # INPUT
@@ -73,45 +73,43 @@ published_value = (
     else 0
 )
 
-st.subheader("Sizes & West Malaysia Price")
+st.subheader("Paste Size & Price")
 
-if "sizes" not in st.session_state:
-    st.session_state.sizes = [
-        {"size": "", "price": 0}
-    ]
+bulk_input = st.text_area(
+    "Paste Excel Size + Price",
+    height=200,
+    placeholder="""
+6FT    8799
+5FT    8199
+3.5FT  7599
+3FT    6999
+"""
+)
 
-for i, item in enumerate(st.session_state.sizes):
+sizes_data = []
 
-    col1, col2 = st.columns(2)
+if bulk_input:
 
-    with col1:
-        size = st.text_input(
-            f"Size {i+1}",
-            value=item["size"],
-            key=f"size_{i}"
-        )
+    lines = bulk_input.strip().split("\n")
 
-    with col2:
-        price = st.number_input(
-            f"West Price {i+1}",
-            min_value=0,
-            step=100,
-            value=item["price"],
-            key=f"price_{i}"
-        )
+    for line in lines:
 
-    st.session_state.sizes[i] = {
-        "size": size,
-        "price": price
-    }
+        parts = line.split()
 
-if st.button("+ Add Size"):
-    st.session_state.sizes.append(
-        {
-            "size": "",
-            "price": 0
-        }
-    )
+        if len(parts) >= 2:
+
+            size = parts[0]
+
+            try:
+                price = int(parts[-1])
+
+                sizes_data.append({
+                    "size": size,
+                    "price": price
+                })
+
+            except:
+                pass
 
 # ==========================
 # GENERATE CSV
@@ -123,7 +121,7 @@ if st.button("Generate CSV"):
 
     size_list = [
         s["size"]
-        for s in st.session_state.sizes
+        for s in sizes_data:
         if s["size"].strip()
     ]
 
@@ -183,7 +181,7 @@ if st.button("Generate CSV"):
     # VARIATION ROWS
     # ==========================
 
-    for s in st.session_state.sizes:
+    for s in sizes_data:
 
         size = s["size"].strip()
 
