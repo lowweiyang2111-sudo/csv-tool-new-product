@@ -45,6 +45,17 @@ st.set_page_config(
 
 st.title("MPO/MELI New Product CSV")
 
+if "product_name" not in st.session_state:
+    st.session_state.product_name = ""
+
+if "product_description" not in st.session_state:
+    st.session_state.product_description = ""
+
+if "bulk_input" not in st.session_state:
+    st.session_state.bulk_input = ""
+
+if "parent_id" not in st.session_state:
+    st.session_state.parent_id = 1
 # ==========================
 # INPUT
 # ==========================
@@ -53,10 +64,12 @@ parent_id = st.number_input(
     "Parent ID",
     min_value=1,
     step=1000
+     key="parent_id"
 )
 
 product_name = st.text_input(
     "Product Name"
+    key="product_name"
 )
 
 visibility = st.radio(
@@ -67,6 +80,7 @@ visibility = st.radio(
 product_description = st.text_area(
     "Product Description",
     height=200
+    key="product_description"
 )
 
 published_value = (
@@ -84,6 +98,7 @@ st.subheader("Paste Size & Price")
 bulk_input = st.text_area(
     "Paste Excel Size + Price",
     height=200,
+    key="bulk_input",
     placeholder="""
 1MR (26")    3,790.00
 2MRR (26")   6,290.00
@@ -125,7 +140,15 @@ if bulk_input:
 # ==========================
 # GENERATE CSV
 # ==========================
+if st.button("Clear All"):
 
+    st.session_state.product_name = ""
+    st.session_state.product_description = ""
+    st.session_state.bulk_input = ""
+    st.session_state.parent_id = 1
+
+    st.rerun()
+    
 if st.button("Generate CSV"):
 
     rows = []
