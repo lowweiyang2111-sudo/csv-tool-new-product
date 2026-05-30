@@ -101,7 +101,13 @@ if bulk_input:
             size = parts[0]
 
             try:
-                price = int(parts[-1])
+              price_text = (
+              parts[-1]
+              .replace(",", "")
+              .replace(".00", "")
+)
+
+price = int(price_text)
 
                 sizes_data.append({
                     "size": size,
