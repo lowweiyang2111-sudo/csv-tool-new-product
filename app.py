@@ -129,21 +129,6 @@ if product_type == "Bedframe":
         ]
     )
 
-if product_type == "Bedframe":
-
-    bedframe_sizes = st.multiselect(
-        "Bedframe Sizes",
-        [
-            "Single",
-            "Super Single",
-            "Queen",
-            "King"
-        ],
-        default=[
-            "Queen",
-            "King"
-        ]
-    )
 
 product_description = st.text_area(
     "Product Description",
@@ -192,6 +177,67 @@ else:
 sizes_data = []
 
 if bulk_input:
+
+    lines = bulk_input.strip().split("\n")
+
+    if product_type == "Bedframe":
+
+        bedframe_size_map = [
+            "King",
+            "Queen",
+            "Super Single",
+            "Single"
+        ]
+
+        for i, line in enumerate(lines):
+
+            if i >= len(bedframe_size_map):
+                break
+
+            try:
+
+                price = int(
+                    line
+                    .replace(",", "")
+                    .replace(".00", "")
+                    .strip()
+                )
+
+                sizes_data.append({
+                    "size": bedframe_size_map[i],
+                    "price": price
+                })
+
+            except:
+                pass
+
+    else:
+
+        for line in lines:
+
+            parts = line.split()
+
+            if len(parts) >= 2:
+
+                try:
+
+                    price_text = (
+                        parts[-1]
+                        .replace(",", "")
+                        .replace(".00", "")
+                    )
+
+                    price = int(price_text)
+
+                    size = " ".join(parts[:-1])
+
+                    sizes_data.append({
+                        "size": size,
+                        "price": price
+                    })
+
+                except:
+                    pass
 
     lines = bulk_input.strip().split("\n")
 
