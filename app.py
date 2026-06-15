@@ -12,6 +12,12 @@ VARIETY_OPTIONS = [
     "Guardian"
 ]
 
+BEDFRAME_VARIETY_OPTIONS = [
+    "Embony",
+    "Wave",
+    "Loro"
+]
+
 COLOR_VALUES = """FG66151 Beige, FG66151 Carolina Blue, FG66151 Cedar,
 FG66151 Dark Brown, FG66151 Dark Cyan, FG66151 Dark Grey,
 FG66151 Denim Blue, FG66151 Espresso, FG66151 Gold,
@@ -35,6 +41,23 @@ Guardian Khaki, Guardian Light Grey,
 Guardian Navy Blue, Guardian Peach,
 Guardian Teal"""
 
+BEDFRAME_COLOR_VALUES = """
+Wave Light Grey|Wave Grey|Wave Dark Grey|Wave Gold|
+Wave Cedar|Wave Peach|Wave Teal|Wave Olive Green|
+Wave Forest Green|Wave Dark Blue|Wave Slate|
+
+Loro Beige|Loro Silver|Loro Grey|Loro Bronze|
+Loro Teal|Loro Light Grey|Loro Granite|Loro Slate|
+
+Embony Beige|Embony Cedar|Embony Dark Beige|
+Embony Denim Blue|Embony Forest Green|
+Embony Gold|Embony Grey|Embony Grey Blue|
+Embony Khaki|Embony Light Grey|
+Embony Navy Blue|Embony Peach|
+Embony Silver Ash|Embony Slate|
+Embony Teal
+"""
+
 # ==========================
 # PAGE
 # ==========================
@@ -44,6 +67,18 @@ st.set_page_config(
 )
 
 st.title("MPO/MELI New Product CSV")
+
+product_type = st.radio(
+    "Product Type",
+    ["Sofa", "Bedframe", "Mattress"]
+)
+
+if product_type == "Mattress":
+    st.info("🚧 Mattress Coming Soon")
+    st.stop()
+
+if product_type == "Bedframe":
+    st.success("🛏️ Bedframe Mode")
 
 if "product_name" not in st.session_state:
     st.session_state.product_name = ""
@@ -56,6 +91,7 @@ if "bulk_input" not in st.session_state:
 
 if "parent_id" not in st.session_state:
     st.session_state.parent_id = 1
+
 # ==========================
 # INPUT
 # ==========================
@@ -64,7 +100,7 @@ parent_id = st.number_input(
     "Parent ID",
     min_value=1,
     step=1000,
-     key="parent_id"
+    key="parent_id"
 )
 
 product_name = st.text_input(
@@ -76,6 +112,38 @@ visibility = st.radio(
     "Visibility",
     ["Public", "Private"]
 )
+
+if product_type == "Bedframe":
+
+    bedframe_variety = st.multiselect(
+        "Bedframe Variety",
+        [
+            "Embony",
+            "Wave",
+            "Loro"
+        ],
+        default=[
+            "Embony",
+            "Wave",
+            "Loro"
+        ]
+    )
+
+if product_type == "Bedframe":
+
+    bedframe_sizes = st.multiselect(
+        "Bedframe Sizes",
+        [
+            "Single",
+            "Super Single",
+            "Queen",
+            "King"
+        ],
+        default=[
+            "Queen",
+            "King"
+        ]
+    )
 
 product_description = st.text_area(
     "Product Description",
@@ -93,13 +161,29 @@ published_value = (
 # BULK SIZE + PRICE
 # ==========================
 
-st.subheader("Paste Size & Price")
+if product_type == "Bedframe":
 
-bulk_input = st.text_area(
-    "Paste Excel Size + Price",
-    height=200,
-    key="bulk_input",
-    placeholder="""
+    st.subheader("Bedframe Price")
+
+    bulk_input = st.text_area(
+        "Paste Bedframe Size + Price",
+        height=200,
+        key="bulk_input",
+        placeholder="""
+Queen 2499
+King 2999
+"""
+    )
+
+else:
+
+    st.subheader("Paste Size & Price")
+
+    bulk_input = st.text_area(
+        "Paste Excel Size + Price",
+        height=200,
+        key="bulk_input",
+        placeholder="""
 1MR (26")    3,790.00
 2MRR (26")   6,290.00
 """
@@ -152,7 +236,7 @@ if st.button("Clear All"):
             del st.session_state[key]
 
     st.rerun()
-    
+
 if st.button("Generate CSV"):
 
     rows = []
@@ -201,13 +285,21 @@ if st.button("Generate CSV"):
             "variety",
 
         "Attribute 5 value(s)":
-            "FG66151|FG66252|FG66353|Guardian",
+    (
+        "FG66151|FG66252|FG66353|Guardian"
+        if product_type == "Sofa"
+        else "Embony|Wave|Loro"
+    ),
 
         "Attribute 6 name":
             "color",
 
         "Attribute 6 value(s)":
-            COLOR_VALUES,
+    (
+        COLOR_VALUES
+        if product_type == "Sofa"
+        else BEDFRAME_COLOR_VALUES
+    ),
 
         "Regular price": "",
 
@@ -231,7 +323,15 @@ if st.button("Generate CSV"):
         west_price = s["price"]
         east_price = west_price + 1000
 
-        for variety in VARIETY_OPTIONS:
+        if product_type == "Sofa":
+
+            variety_list = VARIETY_OPTIONS
+
+        else:
+
+            variety_list = BEDFRAME_VARIETY_OPTIONS
+
+        for variety in variety_list:
 
             for shipping in [
                 "West Malaysia",
@@ -241,7 +341,7 @@ if st.button("Generate CSV"):
                 price = (
                     west_price
                     if shipping ==
-                    "West Malaysia"
+                       "West Malaysia"
                     else east_price
                 )
 
