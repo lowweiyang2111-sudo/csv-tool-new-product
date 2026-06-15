@@ -303,6 +303,15 @@ if st.button("Generate CSV"):
         "Name": product_name,
         "Description": product_description,
         "Published": published_value,
+        "Visibility in catalog":
+    "visible",
+
+"Categories":
+(
+    "Sofa"
+    if product_type == "Sofa"
+    else "Bedframe"
+),
         "Parent": "",
 
         "Attribute 1 name": "seater",
