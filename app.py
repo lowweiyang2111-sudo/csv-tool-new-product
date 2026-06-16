@@ -73,9 +73,6 @@ product_type = st.radio(
     ["Sofa", "Bedframe", "Mattress"]
 )
 
-if product_type == "Mattress":
-    st.info("🚧 Mattress Coming Soon")
-    st.stop()
 
 if product_type == "Bedframe":
     st.success("🛏️ Bedframe Mode")
@@ -128,7 +125,21 @@ if product_type == "Bedframe":
             "Loro"
         ]
     )
+if product_type == "Mattress":
 
+    st.subheader("Mattress Price")
+
+    bulk_input = st.text_area(
+        "Paste Mattress Price",
+        height=200,
+        key="bulk_input",
+        placeholder="""
+2999
+2599
+2299
+1999
+"""
+    )
 
 product_description = st.text_area(
     "Product Description",
@@ -177,6 +188,42 @@ else:
 sizes_data = []
 
 if bulk_input:
+
+    if product_type == "Mattress":
+
+        mattress_size_map = [
+            "King",
+            "Queen",
+            "Super Single",
+            "Single"
+        ]
+
+        lines = bulk_input.strip().split("\n")
+
+        sizes_data = []
+
+        for i, line in enumerate(lines):
+
+            if i >= len(mattress_size_map):
+                break
+
+            try:
+
+                price = int(
+                    line
+                    .replace(",", "")
+                    .replace(".00", "")
+                    .strip()
+                )
+
+                sizes_data.append({
+                    "size": mattress_size_map[i],
+                    "price": price
+                })
+
+            except:
+                pass
+
 
     lines = bulk_input.strip().split("\n")
 
@@ -296,73 +343,83 @@ if st.button("Generate CSV"):
     # PARENT ROW
     # ==========================
 
-    parent_row = {
-        "ID": parent_id,
-        "Type": "variable",
-        "SKU": "",
-        "Name": product_name,
-        "Description": product_description,
-        "Published": published_value,
-        "Visibility in catalog":
-    "visible",
+    if product_type == "Mattress":
 
-"Categories":
-(
-    "Sofa"
-    if product_type == "Sofa"
-    else "Bedframe"
-),
-        "Parent": "",
+        parent_row = {
+            "ID": parent_id,
+            "Type": "variable",
+            "SKU": "",
+            "Name": product_name,
+            "Published": published_value,
+            "Visibility in catalog": "visible",
+            "Parent": "",
 
-        "Attribute 1 name": "seater",
-        "Attribute 1 value(s)":
-            "|".join(size_list),
+            "Attribute 1 name": "Size",
+            "Attribute 1 value(s)": ", ".join(size_list),
 
-        "Attribute 2 name":
-            "shipping",
+            "Attribute 2 name": "Shipping",
+            "Attribute 2 value(s)": "West Malaysia, East Malaysia",
 
-        "Attribute 2 value(s)":
-            "West Malaysia|East Malaysia",
+            "Regular price": "",
 
-        "Attribute 3 name":
-            "material",
+            "Stock": 10,
+            "Stock status": "instock"
+        }
 
-        "Attribute 3 value(s)":
-            "fabric",
+    else:
 
-        "Attribute 4 name":
-            "series",
+        parent_row = {
+            "ID": parent_id,
+            "Type": "variable",
+            "SKU": "",
+            "Name": product_name,
+            "Description": product_description,
+            "Published": published_value,
 
-        "Attribute 4 value(s)":
-            "easy clean",
+            "Visibility in catalog": "visible",
 
-        "Attribute 5 name":
-            "variety",
+            "Categories":
+                (
+                    "Sofa"
+                    if product_type == "Sofa"
+                    else "Bedframe"
+                ),
 
-        "Attribute 5 value(s)":
-    (
-        "FG66151|FG66252|FG66353|Guardian"
-        if product_type == "Sofa"
-        else "Embony|Wave|Loro"
-    ),
+            "Parent": "",
 
-        "Attribute 6 name":
-            "color",
+            "Attribute 1 name": "seater",
+            "Attribute 1 value(s)": "|".join(size_list),
 
-        "Attribute 6 value(s)":
-    (
-        COLOR_VALUES
-        if product_type == "Sofa"
-        else BEDFRAME_COLOR_VALUES
-    ),
+            "Attribute 2 name": "shipping",
+            "Attribute 2 value(s)": "West Malaysia|East Malaysia",
 
-        "Regular price": "",
+            "Attribute 3 name": "material",
+            "Attribute 3 value(s)": "fabric",
 
-        "Stock": 10,
+            "Attribute 4 name": "series",
+            "Attribute 4 value(s)": "easy clean",
 
-        "Stock status":
-            "instock"
-    }
+            "Attribute 5 name": "variety",
+            "Attribute 5 value(s)":
+                (
+                    "FG66151|FG66252|FG66353|Guardian"
+                    if product_type == "Sofa"
+                    else "Embony|Wave|Loro"
+                ),
+
+            "Attribute 6 name": "color",
+            "Attribute 6 value(s)":
+                (
+                    COLOR_VALUES
+                    if product_type == "Sofa"
+                    else BEDFRAME_COLOR_VALUES
+                ),
+
+            "Regular price": "",
+
+            "Stock": 10,
+            "Stock status": "instock"
+        }
 
     rows.append(parent_row)
 
@@ -423,13 +480,21 @@ if st.button("Generate CSV"):
                         f"id:{parent_id}",
 
                     "Attribute 1 name":
-                        "seater",
+(
+    "Size"
+    if product_type == "Mattress"
+    else "seater"
+),
 
                     "Attribute 1 value(s)":
                         size,
 
                     "Attribute 2 name":
-                        "shipping",
+(
+    "Shipping"
+    if product_type == "Mattress"
+    else "shipping"
+),
 
                     "Attribute 2 value(s)":
                         shipping,
