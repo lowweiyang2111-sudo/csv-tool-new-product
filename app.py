@@ -335,8 +335,8 @@ if st.button("Generate CSV"):
 
             "Regular price": "",
 
-            "Stock": "",
-            "Stock status": ""
+            "Stock": 10,
+            "Stock status": "instock"
         }
 
     else:
@@ -432,10 +432,14 @@ if st.button("Generate CSV"):
                     "Attribute 2 name": "Shipping",
                     "Attribute 2 value(s)": shipping,
 
+                    "Visibility in catalog": "visible",
+
                     "Regular price": price,
 
-                    "Stock": "",
-                    "Stock status": ""
+                    "Stock": 10,
+
+                    "Stock status": "instock"
+
                 }
 
                 rows.append(row)
@@ -443,101 +447,101 @@ if st.button("Generate CSV"):
 
     else:
             for s in sizes_data:
-            
+
                 size = s["size"]
                 west_price = s["price"]
                 east_price = west_price + 1000
-            
+
                 if product_type == "Sofa":
-            
+
                     variety_list = VARIETY_OPTIONS
-            
+
                 else:
-            
+
                     variety_list = BEDFRAME_VARIETY_OPTIONS
-            
+
                 for variety in variety_list:
-            
+
                     for shipping in [
                         "West Malaysia",
                         "East Malaysia"
                     ]:
-            
+
                         price = (
                             west_price
                             if shipping ==
                                "West Malaysia"
                             else east_price
                         )
-            
+
                         row = {
                             "ID":
                                 current_id,
-            
+
                             "Type":
                                 "variation",
-            
+
                             "SKU":
                                 "",
-            
+
                             "Name":
                                 product_name,
-            
+
                             "Description":
                                 product_description,
-            
+
                             "Published":
                                 published_value,
-            
+
                             "Parent":
                                 f"id:{parent_id}",
-            
+
                             "Attribute 1 name":
                                 "seater",
-            
+
                             "Attribute 1 value(s)":
                                 size,
-            
+
                             "Attribute 2 name":
                                 "shipping",
-            
+
                             "Attribute 2 value(s)":
                                 shipping,
-            
+
                             "Attribute 3 name":
                                 "material",
-            
+
                             "Attribute 3 value(s)":
                                 "fabric",
-            
+
                             "Attribute 4 name":
                                 "series",
-            
+
                             "Attribute 4 value(s)":
                                 "easy clean",
-            
+
                             "Attribute 5 name":
                                 "variety",
-            
+
                             "Attribute 5 value(s)":
                                 variety,
-            
+
                             "Attribute 6 name":
                                 "color",
-            
+
                             "Attribute 6 value(s)":
                                 "",
-            
+
                             "Regular price":
                                 price,
-            
+
                             "Stock":
                                 10,
-            
+
                             "Stock status":
                                 "instock"
                         }
-            
+
                         rows.append(row)
                         current_id += 1
 
