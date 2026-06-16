@@ -73,6 +73,11 @@ product_type = st.radio(
     ["Sofa", "Bedframe", "Mattress"]
 )
 
+if product_type == "SOFA":
+    st.success("🛋 SOFA Mode")
+
+if product_type == "Mattress":
+    st.success("🛏 Mattress Mode")
 
 if product_type == "Bedframe":
     st.success("🛏️ Bedframe Mode")
@@ -125,21 +130,7 @@ if product_type == "Bedframe":
             "Loro"
         ]
     )
-if product_type == "Mattress":
 
-    st.subheader("Mattress Price")
-
-    bulk_input = st.text_area(
-        "Paste Mattress Price",
-        height=200,
-        key="bulk_input",
-        placeholder="""
-2999
-2599
-2299
-1999
-"""
-    )
 
 product_description = st.text_area(
     "Product Description",
@@ -157,17 +148,35 @@ published_value = (
 # BULK SIZE + PRICE
 # ==========================
 
-if product_type == "Bedframe":
+if product_type == "Mattress":
+
+    st.subheader("Mattress Price")
+
+    bulk_input = st.text_area(
+        "Paste Mattress Price",
+        height=200,
+        key="bulk_input",
+        placeholder="""
+2999
+2599
+2299
+1999
+"""
+    )
+
+elif product_type == "Bedframe":
 
     st.subheader("Bedframe Price")
 
     bulk_input = st.text_area(
-        "Paste Bedframe Size + Price",
+        "Paste Bedframe Price",
         height=200,
         key="bulk_input",
         placeholder="""
-Queen 2499
-King 2999
+2699
+2499
+2199
+2099
 """
     )
 
@@ -183,51 +192,15 @@ else:
 1MR (26")    3,790.00
 2MRR (26")   6,290.00
 """
-)
+    )
 
 sizes_data = []
 
 if bulk_input:
 
-    if product_type == "Mattress":
-
-        mattress_size_map = [
-            "King",
-            "Queen",
-            "Super Single",
-            "Single"
-        ]
-
-        lines = bulk_input.strip().split("\n")
-
-        sizes_data = []
-
-        for i, line in enumerate(lines):
-
-            if i >= len(mattress_size_map):
-                break
-
-            try:
-
-                price = int(
-                    line
-                    .replace(",", "")
-                    .replace(".00", "")
-                    .strip()
-                )
-
-                sizes_data.append({
-                    "size": mattress_size_map[i],
-                    "price": price
-                })
-
-            except:
-                pass
-
-
     lines = bulk_input.strip().split("\n")
 
-    if product_type == "Bedframe":
+    if product_type in ["Bedframe", "Mattress"]:
 
         bedframe_size_map = [
             "King",
@@ -362,8 +335,8 @@ if st.button("Generate CSV"):
 
             "Regular price": "",
 
-            "Stock": 10,
-            "Stock status": "instock"
+            "Stock": "",
+            "Stock status": ""
         }
 
     else:
@@ -375,7 +348,6 @@ if st.button("Generate CSV"):
             "Name": product_name,
             "Description": product_description,
             "Published": published_value,
-
             "Visibility in catalog": "visible",
 
             "Categories":
@@ -428,113 +400,146 @@ if st.button("Generate CSV"):
     # ==========================
     # VARIATION ROWS
     # ==========================
+    if product_type == "Mattress":
 
-    for s in sizes_data:
+        for s in sizes_data:
 
-        size = s["size"]
-        west_price = s["price"]
-        east_price = west_price + 1000
-
-        if product_type == "Sofa":
-
-            variety_list = VARIETY_OPTIONS
-
-        else:
-
-            variety_list = BEDFRAME_VARIETY_OPTIONS
-
-        for variety in variety_list:
+            size = s["size"]
+            west_price = s["price"]
+            east_price = west_price + 1000
 
             for shipping in [
                 "West Malaysia",
                 "East Malaysia"
             ]:
-
                 price = (
                     west_price
-                    if shipping ==
-                       "West Malaysia"
+                    if shipping == "West Malaysia"
                     else east_price
                 )
 
                 row = {
-                    "ID":
-                        current_id,
+                    "ID": current_id,
+                    "Type": "variation",
+                    "SKU": "",
+                    "Name": product_name,
+                    "Published": published_value,
+                    "Parent": f"id:{parent_id}",
 
-                    "Type":
-                        "variation",
+                    "Attribute 1 name": "Size",
+                    "Attribute 1 value(s)": size,
 
-                    "SKU":
-                        "",
+                    "Attribute 2 name": "Shipping",
+                    "Attribute 2 value(s)": shipping,
 
-                    "Name":
-                        product_name,
+                    "Regular price": price,
 
-                    "Description":
-                        product_description,
-
-                    "Published":
-                        published_value,
-
-                    "Parent":
-                        f"id:{parent_id}",
-
-                    "Attribute 1 name":
-(
-    "Size"
-    if product_type == "Mattress"
-    else "seater"
-),
-
-                    "Attribute 1 value(s)":
-                        size,
-
-                    "Attribute 2 name":
-(
-    "Shipping"
-    if product_type == "Mattress"
-    else "shipping"
-),
-
-                    "Attribute 2 value(s)":
-                        shipping,
-
-                    "Attribute 3 name":
-                        "material",
-
-                    "Attribute 3 value(s)":
-                        "fabric",
-
-                    "Attribute 4 name":
-                        "series",
-
-                    "Attribute 4 value(s)":
-                        "easy clean",
-
-                    "Attribute 5 name":
-                        "variety",
-
-                    "Attribute 5 value(s)":
-                        variety,
-
-                    "Attribute 6 name":
-                        "color",
-
-                    "Attribute 6 value(s)":
-                        "",
-
-                    "Regular price":
-                        price,
-
-                    "Stock":
-                        10,
-
-                    "Stock status":
-                        "instock"
+                    "Stock": "",
+                    "Stock status": ""
                 }
 
                 rows.append(row)
                 current_id += 1
+
+    else:
+            for s in sizes_data:
+            
+                size = s["size"]
+                west_price = s["price"]
+                east_price = west_price + 1000
+            
+                if product_type == "Sofa":
+            
+                    variety_list = VARIETY_OPTIONS
+            
+                else:
+            
+                    variety_list = BEDFRAME_VARIETY_OPTIONS
+            
+                for variety in variety_list:
+            
+                    for shipping in [
+                        "West Malaysia",
+                        "East Malaysia"
+                    ]:
+            
+                        price = (
+                            west_price
+                            if shipping ==
+                               "West Malaysia"
+                            else east_price
+                        )
+            
+                        row = {
+                            "ID":
+                                current_id,
+            
+                            "Type":
+                                "variation",
+            
+                            "SKU":
+                                "",
+            
+                            "Name":
+                                product_name,
+            
+                            "Description":
+                                product_description,
+            
+                            "Published":
+                                published_value,
+            
+                            "Parent":
+                                f"id:{parent_id}",
+            
+                            "Attribute 1 name":
+                                "seater",
+            
+                            "Attribute 1 value(s)":
+                                size,
+            
+                            "Attribute 2 name":
+                                "shipping",
+            
+                            "Attribute 2 value(s)":
+                                shipping,
+            
+                            "Attribute 3 name":
+                                "material",
+            
+                            "Attribute 3 value(s)":
+                                "fabric",
+            
+                            "Attribute 4 name":
+                                "series",
+            
+                            "Attribute 4 value(s)":
+                                "easy clean",
+            
+                            "Attribute 5 name":
+                                "variety",
+            
+                            "Attribute 5 value(s)":
+                                variety,
+            
+                            "Attribute 6 name":
+                                "color",
+            
+                            "Attribute 6 value(s)":
+                                "",
+            
+                            "Regular price":
+                                price,
+            
+                            "Stock":
+                                10,
+            
+                            "Stock status":
+                                "instock"
+                        }
+            
+                        rows.append(row)
+                        current_id += 1
 
     df = pd.DataFrame(rows)
 
