@@ -1,382 +1,730 @@
-import streamlit as stimport pandas as pd
+import streamlit as st
+import pandas as pd
 
-==========================
+# ==========================
+# FIXED VALUES
+# ==========================
 
-FIXED VALUES
+VARIETY_OPTIONS = [
+    "FG66151",
+    "FG66252",
+    "FG66353",
+    "Guardian"
+]
 
-==========================
+BEDFRAME_VARIETY_OPTIONS = [
+    "Embony",
+    "Wave",
+    "Loro",
+    "Easy Clean Fabric",
+    "Normal Fabric"
+]
 
-VARIETY_OPTIONS = ["FG66151","FG66252","FG66353","Guardian"]
+BED_SIZE_OPTIONS = [
+    "King",
+    "Queen",
+    "Super Single",
+    "Single"
+]
 
-BEDFRAME_VARIETY_OPTIONS = ["Embony","Wave","Loro"]
+# ==========================
+# SOFA COLORS
+# ==========================
 
-COLOR_VALUES = """FG66151 Beige, FG66151 Carolina Blue, FG66151 Cedar,FG66151 Dark Brown, FG66151 Dark Cyan, FG66151 Dark Grey,FG66151 Denim Blue, FG66151 Espresso, FG66151 Gold,FG66151 Grey, FG66151 Light Grey, FG66151 Onyx,FG66151 Peach, FG66151 Police Blue, FG66151 Prussian Blue,FG66151 Teal, FG66252 Beige, FG66252 Cedar,FG66252 Charcoal, FG66252 Dark Cyan, FG66252 Gold,FG66252 Granite, FG66252 Grey, FG66252 Light Grey,FG66252 Mahogany, FG66252 Navy Blue, FG66252 Onyx,FG66252 Red Orange, FG66353 Beige, FG66353 Brown,FG66353 Dark Blue, FG66353 Dark Cyan,FG66353 Denim Blue, FG66353 Forest Green,FG66353 Grey, FG66353 Greyish Blue,FG66353 Light Blue, FG66353 Mahogany,FG66353 Midnight Blue, FG66353 Onyx,FG66353 Teal, Guardian Beige,Guardian Cedar, Guardian Dark Blue,Guardian Dark Grey, Guardian Denim Blue,Guardian Gold, Guardian Grey,Guardian Khaki, Guardian Light Grey,Guardian Navy Blue, Guardian Peach,Guardian Teal"""
+COLOR_VALUES = """FG66151 Beige, FG66151 Carolina Blue, FG66151 Cedar,
+FG66151 Dark Brown, FG66151 Dark Cyan, FG66151 Dark Grey,
+FG66151 Denim Blue, FG66151 Espresso, FG66151 Gold,
+FG66151 Grey, FG66151 Light Grey, FG66151 Onyx,
+FG66151 Peach, FG66151 Police Blue, FG66151 Prussian Blue,
+FG66151 Teal, FG66252 Beige, FG66252 Cedar,
+FG66252 Charcoal, FG66252 Dark Cyan, FG66252 Gold,
+FG66252 Granite, FG66252 Grey, FG66252 Light Grey,
+FG66252 Mahogany, FG66252 Navy Blue, FG66252 Onyx,
+FG66252 Red Orange, FG66353 Beige, FG66353 Brown,
+FG66353 Dark Blue, FG66353 Dark Cyan,
+FG66353 Denim Blue, FG66353 Forest Green,
+FG66353 Grey, FG66353 Greyish Blue,
+FG66353 Light Blue, FG66353 Mahogany,
+FG66353 Midnight Blue, FG66353 Onyx,
+FG66353 Teal, Guardian Beige,
+Guardian Cedar, Guardian Dark Blue,
+Guardian Dark Grey, Guardian Denim Blue,
+Guardian Gold, Guardian Grey,
+Guardian Khaki, Guardian Light Grey,
+Guardian Navy Blue, Guardian Peach,
+Guardian Teal"""
 
-BEDFRAME_COLOR_VALUES = """Wave Light Grey|Wave Grey|Wave Dark Grey|Wave Gold|Wave Cedar|Wave Peach|Wave Teal|Wave Olive Green|Wave Forest Green|Wave Dark Blue|Wave Slate|
+# ==========================
+# BEDFRAME COLORS
+# ==========================
 
-Loro Beige|Loro Silver|Loro Grey|Loro Bronze|Loro Teal|Loro Light Grey|Loro Granite|Loro Slate|
+WAVE_COLOR_VALUES = (
+    "Wave Light Grey|"
+    "Wave Grey|"
+    "Wave Dark Grey|"
+    "Wave Gold|"
+    "Wave Cedar|"
+    "Wave Peach|"
+    "Wave Teal|"
+    "Wave Olive Green|"
+    "Wave Forest Green|"
+    "Wave Dark Blue|"
+    "Wave Slate"
+)
 
-Embony Beige|Embony Cedar|Embony Dark Beige|Embony Denim Blue|Embony Forest Green|Embony Gold|Embony Grey|Embony Grey Blue|Embony Khaki|Embony Light Grey|Embony Navy Blue|Embony Peach|Embony Silver Ash|Embony Slate|Embony Teal"""
+LORO_COLOR_VALUES = (
+    "Loro Beige|"
+    "Loro Silver|"
+    "Loro Grey|"
+    "Loro Bronze|"
+    "Loro Teal|"
+    "Loro Light Grey|"
+    "Loro Granite|"
+    "Loro Slate"
+)
 
-==========================
+EMBONY_COLOR_VALUES = (
+    "Embony Beige|"
+    "Embony Cedar|"
+    "Embony Dark Beige|"
+    "Embony Denim Blue|"
+    "Embony Forest Green|"
+    "Embony Gold|"
+    "Embony Grey|"
+    "Embony Grey Blue|"
+    "Embony Khaki|"
+    "Embony Light Grey|"
+    "Embony Navy Blue|"
+    "Embony Peach|"
+    "Embony Silver Ash|"
+    "Embony Slate|"
+    "Embony Teal"
+)
 
-PAGE
+EASY_CLEAN_COLOR_VALUES = (
+    "FG66151 Beige|"
+    "FG66151 Carolina Blue|"
+    "FG66151 Cedar|"
+    "FG66151 Dark Brown|"
+    "FG66151 Dark Cyan|"
+    "FG66151 Dark Grey|"
+    "FG66151 Denim Blue|"
+    "FG66151 Espresso|"
+    "FG66151 Gold|"
+    "FG66151 Grey|"
+    "FG66151 Light Grey|"
+    "FG66151 Onyx|"
+    "FG66151 Peach|"
+    "FG66151 Police Blue|"
+    "FG66151 Prussian Blue|"
+    "FG66151 Teal|"
+    "FG66252 Beige|"
+    "FG66252 Cedar|"
+    "FG66252 Charcoal|"
+    "FG66252 Dark Cyan|"
+    "FG66252 Gold|"
+    "FG66252 Granite|"
+    "FG66252 Grey|"
+    "FG66252 Light Grey|"
+    "FG66252 Mahogany|"
+    "FG66252 Navy Blue|"
+    "FG66252 Onyx|"
+    "FG66252 Red Orange|"
+    "FG66353 Beige|"
+    "FG66353 Brown|"
+    "FG66353 Dark Blue|"
+    "FG66353 Dark Cyan|"
+    "FG66353 Denim Blue|"
+    "FG66353 Forest Green|"
+    "FG66353 Grey|"
+    "FG66353 Greyish Blue|"
+    "FG66353 Light Blue|"
+    "FG66353 Mahogany|"
+    "FG66353 Midnight Blue|"
+    "FG66353 Onyx|"
+    "FG66353 Teal"
+)
 
-==========================
+NORMAL_FABRIC_COLOR_VALUES = (
+    "normal light gray|"
+    "normal dark blue"
+)
 
-st.set_page_config(page_title="MPO/MELI New Product CSV")
+BEDFRAME_COLOR_MAP = {
+    "Wave": WAVE_COLOR_VALUES,
+    "Loro": LORO_COLOR_VALUES,
+    "Embony": EMBONY_COLOR_VALUES,
+    "Easy Clean Fabric": EASY_CLEAN_COLOR_VALUES,
+    "Normal Fabric": NORMAL_FABRIC_COLOR_VALUES
+}
+
+# ==========================
+# PAGE
+# ==========================
+
+st.set_page_config(
+    page_title="MPO/MELI New Product CSV"
+)
 
 st.title("MPO/MELI New Product CSV")
 
-product_type = st.radio("Product Type",["Sofa", "Bedframe", "Mattress"])
-
-if product_type == "SOFA":st.success("🛋 SOFA Mode")
-
-if product_type == "Mattress":st.success("🛏 Mattress Mode")
-
-if product_type == "Bedframe":st.success("🛏️ Bedframe Mode")
-
-if "product_name" not in st.session_state:st.session_state.product_name = ""
-
-if "product_description" not in st.session_state:st.session_state.product_description = ""
-
-if "bulk_input" not in st.session_state:st.session_state.bulk_input = ""
-
-if "parent_id" not in st.session_state:st.session_state.parent_id = 1
-
-==========================
-
-INPUT
-
-==========================
-
-parent_id = st.number_input("Parent ID",min_value=1,step=1000,key="parent_id")
-
-product_name = st.text_input("Product Name",key="product_name")
-
-visibility = st.radio("Visibility",["Public", "Private"])
-
-if product_type == "Bedframe":
-
-bedframe_variety = st.multiselect(
-    "Bedframe Variety",
+product_type = st.radio(
+    "Product Type",
     [
-        "Embony",
-        "Wave",
-        "Loro"
-    ],
-    default=[
-        "Embony",
-        "Wave",
-        "Loro"
+        "Sofa",
+        "Bedframe",
+        "Mattress"
     ]
 )
 
-product_description = st.text_area("Product Description",height=200,key="product_description")
+if product_type == "Sofa":
+    st.success("🛋 SOFA Mode")
 
-published_value = (1if visibility == "Public"else 0)
+if product_type == "Mattress":
+    st.success("🛏 Mattress Mode")
 
-==========================
+if product_type == "Bedframe":
+    st.success("🛏️ Bedframe Mode")
 
-BULK SIZE + PRICE
+# ==========================
+# SESSION STATE
+# ==========================
 
-==========================
+if "product_name" not in st.session_state:
+    st.session_state.product_name = ""
+
+if "product_description" not in st.session_state:
+    st.session_state.product_description = ""
+
+if "bulk_input" not in st.session_state:
+    st.session_state.bulk_input = ""
+
+if "parent_id" not in st.session_state:
+    st.session_state.parent_id = 1
+
+# ==========================
+# INPUT
+# ==========================
+
+parent_id = st.number_input(
+    "Parent ID",
+    min_value=1,
+    step=1000,
+    key="parent_id"
+)
+
+product_name = st.text_input(
+    "Product Name",
+    key="product_name"
+)
+
+visibility = st.radio(
+    "Visibility",
+    [
+        "Public",
+        "Private"
+    ]
+)
+
+# ==========================
+# BEDFRAME / MATTRESS SIZE
+# ==========================
+
+selected_sizes = []
+
+if product_type in [
+    "Bedframe",
+    "Mattress"
+]:
+
+    selected_size_input = st.multiselect(
+        "Select Size",
+        BED_SIZE_OPTIONS,
+        default=BED_SIZE_OPTIONS
+    )
+
+    # 保持原本尺寸次序
+    selected_sizes = [
+        size
+        for size in BED_SIZE_OPTIONS
+        if size in selected_size_input
+    ]
+
+    if selected_sizes:
+        st.info(
+            "Price order: "
+            + " → ".join(selected_sizes)
+        )
+
+# ==========================
+# BEDFRAME VARIETY
+# ==========================
+
+bedframe_variety = []
+bedframe_plus_250_variety = []
+
+if product_type == "Bedframe":
+
+    bedframe_variety = st.multiselect(
+        "Bedframe Variety",
+        BEDFRAME_VARIETY_OPTIONS,
+        default=[
+            "Embony",
+            "Wave",
+            "Loro"
+        ]
+    )
+
+    bedframe_plus_250_variety = st.multiselect(
+        "Select Bedframe Variety To Add RM250",
+        bedframe_variety,
+        default=[]
+    )
+
+product_description = st.text_area(
+    "Product Description",
+    height=200,
+    key="product_description"
+)
+
+published_value = (
+    1
+    if visibility == "Public"
+    else 0
+)
+
+# ==========================
+# BULK SIZE + PRICE
+# ==========================
 
 if product_type == "Mattress":
 
-st.subheader("Mattress Price")
+    st.subheader("Mattress Price")
 
-bulk_input = st.text_area(
-    "Paste Mattress Price",
-    height=200,
-    key="bulk_input",
-    placeholder="""
-
-2999259922991999""")
+    bulk_input = st.text_area(
+        "Paste Mattress Price",
+        height=200,
+        key="bulk_input",
+        placeholder="""2999
+2599
+2299
+1999"""
+    )
 
 elif product_type == "Bedframe":
 
-st.subheader("Bedframe Price")
+    st.subheader("Bedframe Price")
 
-bulk_input = st.text_area(
-    "Paste Bedframe Price",
-    height=200,
-    key="bulk_input",
-    placeholder="""
-
-2699249921992099""")
+    bulk_input = st.text_area(
+        "Paste Bedframe Price",
+        height=200,
+        key="bulk_input",
+        placeholder="""2699
+2499
+2199
+2099"""
+    )
 
 else:
 
-st.subheader("Paste Size & Price")
+    st.subheader("Paste Size & Price")
 
-bulk_input = st.text_area(
-    "Paste Excel Size + Price",
-    height=200,
-    key="bulk_input",
-    placeholder="""
+    bulk_input = st.text_area(
+        "Paste Excel Size + Price",
+        height=200,
+        key="bulk_input",
+        placeholder="""1MR (26")    3,790.00
+2MRR (26")   6,290.00"""
+    )
 
-1MR (26")    3,790.002MRR (26")   6,290.00""")
+# ==========================
+# PROCESS SIZE + PRICE
+# ==========================
 
 sizes_data = []
 
 if bulk_input:
 
-lines = bulk_input.strip().split("\n")
-
-if product_type in ["Bedframe", "Mattress"]:
-
-    bedframe_size_map = [
-        "King",
-        "Queen",
-        "Super Single",
-        "Single"
+    lines = [
+        line.strip()
+        for line in bulk_input.strip().split("\n")
+        if line.strip()
     ]
 
-    for i, line in enumerate(lines):
+    if product_type in [
+        "Bedframe",
+        "Mattress"
+    ]:
 
-        if i >= len(bedframe_size_map):
-            break
+        for index, line in enumerate(lines):
 
-        try:
-
-            price = int(
-                line
-                .replace(",", "")
-                .replace(".00", "")
-                .strip()
-            )
-
-            sizes_data.append({
-                "size": bedframe_size_map[i],
-                "price": price
-            })
-
-        except:
-            pass
-
-else:
-
-    for line in lines:
-
-        parts = line.split()
-
-        if len(parts) >= 2:
+            if index >= len(selected_sizes):
+                break
 
             try:
 
                 price_text = (
-                    parts[-1]
+                    line
+                    .replace("RM", "")
                     .replace(",", "")
                     .replace(".00", "")
+                    .strip()
                 )
 
                 price = int(price_text)
 
-                size = " ".join(parts[:-1])
-
                 sizes_data.append({
-                    "size": size,
+                    "size": selected_sizes[index],
                     "price": price
                 })
 
-            except:
+            except ValueError:
                 pass
 
-lines = bulk_input.strip().split("\n")
+    else:
 
-for line in lines:
+        for line in lines:
 
-    parts = line.split()
+            parts = line.split()
 
-    if len(parts) >= 2:
+            if len(parts) >= 2:
 
-        try:
+                try:
 
-            price_text = (
-                parts[-1]
-                .replace(",", "")
-                .replace(".00", "")
-            )
+                    price_text = (
+                        parts[-1]
+                        .replace("RM", "")
+                        .replace(",", "")
+                        .replace(".00", "")
+                        .strip()
+                    )
 
-            price = int(price_text)
+                    price = int(price_text)
+                    size = " ".join(parts[:-1])
 
-            size = " ".join(parts[:-1])
+                    sizes_data.append({
+                        "size": size,
+                        "price": price
+                    })
 
-            sizes_data.append({
-                "size": size,
-                "price": price
-            })
+                except ValueError:
+                    pass
 
-        except:
-            pass
-
-==========================
-
-GENERATE CSV
-
-==========================
+# ==========================
+# CLEAR ALL
+# ==========================
 
 if st.button("Clear All"):
 
-for key in [
-    "product_name",
-    "product_description",
-    "bulk_input",
-    "parent_id"
-]:
-    if key in st.session_state:
-        del st.session_state[key]
+    for key in [
+        "product_name",
+        "product_description",
+        "bulk_input",
+        "parent_id"
+    ]:
+        if key in st.session_state:
+            del st.session_state[key]
 
-st.rerun()
+    st.rerun()
+
+# ==========================
+# GENERATE CSV
+# ==========================
 
 if st.button("Generate CSV"):
 
-rows = []
+    # ==========================
+    # VALIDATION
+    # ==========================
 
-size_list = [
-    s["size"]
-    for s in sizes_data
-]
+    if not product_name.strip():
 
-# ==========================
-# PARENT ROW
-# ==========================
+        st.error("Please enter Product Name.")
+        st.stop()
 
-if product_type == "Mattress":
+    if product_type in [
+        "Bedframe",
+        "Mattress"
+    ]:
 
-    parent_row = {
-        "ID": parent_id,
-        "Type": "variable",
-        "SKU": "",
-        "Name": product_name,
-        "Published": published_value,
-        "Visibility in catalog": "visible",
-        "Parent": "",
+        if not selected_sizes:
 
-        "Attribute 1 name": "Size",
-        "Attribute 1 value(s)": ", ".join(size_list),
+            st.error(
+                "Please select at least one size."
+            )
+            st.stop()
 
-        "Attribute 2 name": "Shipping",
-        "Attribute 2 value(s)": "West Malaysia, East Malaysia",
+        if len(sizes_data) != len(selected_sizes):
 
-        "Regular price": "",
+            st.error(
+                "Price quantity must match "
+                "selected size quantity."
+            )
+            st.stop()
 
-        "Stock": 10,
-        "Stock status": "instock"
-    }
+    if not sizes_data:
 
-else:
+        st.error(
+            "Please enter valid size and price."
+        )
+        st.stop()
 
-    parent_row = {
-        "ID": parent_id,
-        "Type": "variable",
-        "SKU": "",
-        "Name": product_name,
-        "Description": product_description,
-        "Published": published_value,
-        "Visibility in catalog": "visible",
+    if (
+        product_type == "Bedframe"
+        and not bedframe_variety
+    ):
 
-        "Categories":
-            (
-                "Sofa"
-                if product_type == "Sofa"
-                else "Bedframe"
-            ),
+        st.error(
+            "Please select at least one "
+            "Bedframe Variety."
+        )
+        st.stop()
 
-        "Parent": "",
+    rows = []
 
-        "Attribute 1 name": "seater",
-        "Attribute 1 value(s)": "|".join(size_list),
+    size_list = [
+        size_item["size"]
+        for size_item in sizes_data
+    ]
 
-        "Attribute 2 name": "shipping",
-        "Attribute 2 value(s)": "West Malaysia|East Malaysia",
+    # ==========================
+    # PARENT ROW
+    # ==========================
 
-        "Attribute 3 name": "material",
-        "Attribute 3 value(s)": "fabric",
+    if product_type == "Mattress":
 
-        "Attribute 4 name": "series",
-        "Attribute 4 value(s)": "easy clean",
+        parent_row = {
+            "ID": parent_id,
+            "Type": "variable",
+            "SKU": "",
+            "Name": product_name,
+            "Published": published_value,
+            "Visibility in catalog": "visible",
+            "Parent": "",
 
-        "Attribute 5 name": "variety",
-        "Attribute 5 value(s)":
-            (
-                "FG66151|FG66252|FG66353|Guardian"
-                if product_type == "Sofa"
-                else "Embony|Wave|Loro"
-            ),
+            "Attribute 1 name": "Size",
+            "Attribute 1 value(s)":
+                ", ".join(size_list),
+            "Attribute 1 visible": 1,
+            "Attribute 1 global": 0,
 
-        "Attribute 6 name": "color",
-        "Attribute 6 value(s)":
-            (
-                COLOR_VALUES
-                if product_type == "Sofa"
-                else BEDFRAME_COLOR_VALUES
-            ),
+            "Attribute 2 name": "Shipping",
+            "Attribute 2 value(s)":
+                "West Malaysia, East Malaysia",
+            "Attribute 2 visible": 1,
+            "Attribute 2 global": 0,
 
-        "Regular price": "",
+            "Regular price": "",
 
-        "Stock": 10,
-        "Stock status": "instock"
-    }
+            "Stock": 10,
+            "Stock status": "instock"
+        }
 
-rows.append(parent_row)
+    else:
 
-current_id = parent_id + 1
+        # ==========================
+        # SOFA PARENT VALUES
+        # ==========================
 
-# ==========================
-# VARIATION ROWS
-# ==========================
-if product_type == "Mattress":
+        if product_type == "Sofa":
 
-    for s in sizes_data:
+            parent_series_value = "easy clean"
 
-        size = s["size"]
-        west_price = s["price"]
-        east_price = west_price + 1000
-
-        for shipping in [
-            "West Malaysia",
-            "East Malaysia"
-        ]:
-            price = (
-                west_price
-                if shipping == "West Malaysia"
-                else east_price
+            parent_variety_value = (
+                "FG66151|"
+                "FG66252|"
+                "FG66353|"
+                "Guardian"
             )
 
-            row = {
-                "ID": current_id,
-                "Type": "variation",
-                "SKU": "",
-                "Name": product_name,
-                "Published": published_value,
-                "Parent": f"id:{parent_id}",
+            parent_color_value = COLOR_VALUES
 
-                "Attribute 1 name": "Size",
-                "Attribute 1 value(s)": size,
+        # ==========================
+        # BEDFRAME PARENT VALUES
+        # ==========================
 
-                "Attribute 2 name": "Shipping",
-                "Attribute 2 value(s)": shipping,
+        else:
 
-                "Visibility in catalog": "visible",
+            parent_series_list = []
 
-                "Regular price": price,
+            if "Normal Fabric" in bedframe_variety:
 
-                "Stock": 10,
+                parent_series_list.append(
+                    "normal fabric"
+                )
 
-                "Stock status": "instock"
+            if any(
+                variety in bedframe_variety
+                for variety in [
+                    "Embony",
+                    "Wave",
+                    "Loro",
+                    "Easy Clean Fabric"
+                ]
+            ):
 
-            }
+                parent_series_list.append(
+                    "easy clean fabric"
+                )
 
-            rows.append(row)
-            current_id += 1
+            parent_series_value = "|".join(
+                parent_series_list
+            )
 
-else:
-        for s in sizes_data:
+            parent_variety_value = "|".join(
+                bedframe_variety
+            )
 
-            size = s["size"]
-            west_price = s["price"]
+            parent_color_list = []
+
+            for variety in bedframe_variety:
+
+                variety_colors = (
+                    BEDFRAME_COLOR_MAP.get(
+                        variety,
+                        ""
+                    )
+                )
+
+                if variety_colors:
+
+                    parent_color_list.append(
+                        variety_colors
+                    )
+
+            parent_color_value = "|".join(
+                parent_color_list
+            )
+
+        parent_row = {
+            "ID": parent_id,
+            "Type": "variable",
+            "SKU": "",
+            "Name": product_name,
+            "Description": product_description,
+            "Published": published_value,
+            "Visibility in catalog": "visible",
+
+            "Categories":
+                (
+                    "Sofa"
+                    if product_type == "Sofa"
+                    else "Bedframe"
+                ),
+
+            "Parent": "",
+
+            "Attribute 1 name": "seater",
+            "Attribute 1 value(s)":
+                "|".join(size_list),
+            "Attribute 1 visible": 1,
+            "Attribute 1 global": 0,
+
+            "Attribute 2 name": "shipping",
+            "Attribute 2 value(s)":
+                "West Malaysia|East Malaysia",
+            "Attribute 2 visible": 1,
+            "Attribute 2 global": 0,
+
+            "Attribute 3 name": "material",
+            "Attribute 3 value(s)": "fabric",
+            "Attribute 3 visible": 1,
+            "Attribute 3 global": 0,
+
+            "Attribute 4 name": "series",
+            "Attribute 4 value(s)":
+                parent_series_value,
+            "Attribute 4 visible": 1,
+            "Attribute 4 global": 0,
+
+            "Attribute 5 name": "variety",
+            "Attribute 5 value(s)":
+                parent_variety_value,
+            "Attribute 5 visible": 1,
+            "Attribute 5 global": 0,
+
+            "Attribute 6 name": "color",
+            "Attribute 6 value(s)":
+                parent_color_value,
+            "Attribute 6 visible": 1,
+            "Attribute 6 global": 0,
+
+            "Regular price": "",
+
+            "Stock": 10,
+            "Stock status": "instock"
+        }
+
+    # Parent variable row 必须是第一行
+    rows.append(parent_row)
+
+    # 第一个 variation ID
+    current_id = parent_id + 1
+
+    # ==========================
+    # MATTRESS VARIATIONS
+    # ==========================
+
+    if product_type == "Mattress":
+
+        for size_item in sizes_data:
+
+            size = size_item["size"]
+            west_price = size_item["price"]
+            east_price = west_price + 1000
+
+            for shipping in [
+                "West Malaysia",
+                "East Malaysia"
+            ]:
+
+                price = (
+                    west_price
+                    if shipping == "West Malaysia"
+                    else east_price
+                )
+
+                row = {
+                    "ID": current_id,
+                    "Type": "variation",
+                    "SKU": "",
+                    "Name": product_name,
+                    "Published": published_value,
+                    "Parent": f"id:{parent_id}",
+
+                    "Attribute 1 name": "Size",
+                    "Attribute 1 value(s)": size,
+                    "Attribute 1 visible": 1,
+                    "Attribute 1 global": 0,
+
+                    "Attribute 2 name": "Shipping",
+                    "Attribute 2 value(s)": shipping,
+                    "Attribute 2 visible": 1,
+                    "Attribute 2 global": 0,
+
+                    "Visibility in catalog": "visible",
+
+                    "Regular price": price,
+
+                    "Stock": 10,
+                    "Stock status": "instock"
+                }
+
+                rows.append(row)
+
+                # 每生成一个 variation，ID +1
+                current_id += 1
+
+    # ==========================
+    # SOFA / BEDFRAME VARIATIONS
+    # ==========================
+
+    else:
+
+        for size_item in sizes_data:
+
+            size = size_item["size"]
+            west_price = size_item["price"]
             east_price = west_price + 1000
 
             if product_type == "Sofa":
@@ -385,7 +733,7 @@ else:
 
             else:
 
-                variety_list = BEDFRAME_VARIETY_OPTIONS
+                variety_list = bedframe_variety
 
             for variety in variety_list:
 
@@ -396,23 +744,57 @@ else:
 
                     price = (
                         west_price
-                        if shipping ==
-                           "West Malaysia"
+                        if shipping == "West Malaysia"
                         else east_price
                     )
 
+                    # 手动选择加 RM250
+                    if (
+                        product_type == "Bedframe"
+                        and variety
+                        in bedframe_plus_250_variety
+                    ):
+
+                        price += 250
+
+                    # ==========================
+                    # ATTRIBUTE 4 + COLOR
+                    # ==========================
+
+                    if product_type == "Bedframe":
+
+                        if variety == "Normal Fabric":
+
+                            series_value = (
+                                "normal fabric"
+                            )
+
+                        else:
+
+                            series_value = (
+                                "easy clean fabric"
+                            )
+
+                        color_value = (
+                            BEDFRAME_COLOR_MAP.get(
+                                variety,
+                                ""
+                            )
+                        )
+
+                    else:
+
+                        series_value = "easy clean"
+                        color_value = ""
+
                     row = {
-                        "ID":
-                            current_id,
+                        "ID": current_id,
 
-                        "Type":
-                            "variation",
+                        "Type": "variation",
 
-                        "SKU":
-                            "",
+                        "SKU": "",
 
-                        "Name":
-                            product_name,
+                        "Name": product_name,
 
                         "Description":
                             product_description,
@@ -429,11 +811,23 @@ else:
                         "Attribute 1 value(s)":
                             size,
 
+                        "Attribute 1 visible":
+                            1,
+
+                        "Attribute 1 global":
+                            0,
+
                         "Attribute 2 name":
                             "shipping",
 
                         "Attribute 2 value(s)":
                             shipping,
+
+                        "Attribute 2 visible":
+                            1,
+
+                        "Attribute 2 global":
+                            0,
 
                         "Attribute 3 name":
                             "material",
@@ -441,11 +835,23 @@ else:
                         "Attribute 3 value(s)":
                             "fabric",
 
+                        "Attribute 3 visible":
+                            1,
+
+                        "Attribute 3 global":
+                            0,
+
                         "Attribute 4 name":
                             "series",
 
                         "Attribute 4 value(s)":
-                            "easy clean",
+                            series_value,
+
+                        "Attribute 4 visible":
+                            1,
+
+                        "Attribute 4 global":
+                            0,
 
                         "Attribute 5 name":
                             "variety",
@@ -453,11 +859,23 @@ else:
                         "Attribute 5 value(s)":
                             variety,
 
+                        "Attribute 5 visible":
+                            1,
+
+                        "Attribute 5 global":
+                            0,
+
                         "Attribute 6 name":
                             "color",
 
                         "Attribute 6 value(s)":
-                            "",
+                            color_value,
+
+                        "Attribute 6 visible":
+                            1,
+
+                        "Attribute 6 global":
+                            0,
 
                         "Regular price":
                             price,
@@ -470,20 +888,28 @@ else:
                     }
 
                     rows.append(row)
+
+                    # 每生成一个 variation，ID +1
                     current_id += 1
 
-df = pd.DataFrame(rows)
+    # ==========================
+    # CREATE CSV
+    # ==========================
 
-csv = df.to_csv(
-    index=False,
-    encoding="utf-8-sig"
-)
+    df = pd.DataFrame(rows)
 
-st.success("CSV Generated!")
+    csv = df.to_csv(
+        index=False,
+        encoding="utf-8-sig"
+    )
 
-st.download_button(
-    "Download CSV",
-    csv,
-    file_name=f"{product_name}.csv",
-    mime="text/csv"
-)
+    st.success(
+        f"CSV Generated! Total rows: {len(rows)}"
+    )
+
+    st.download_button(
+        "Download CSV",
+        data=csv,
+        file_name=f"{product_name}.csv",
+        mime="text/csv"
+    )
