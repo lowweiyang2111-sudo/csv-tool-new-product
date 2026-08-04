@@ -128,6 +128,10 @@ visibility = st.radio(
     ["Public", "Private"]
 )
 
+# ==========================
+# SIZE SELECTION
+# ==========================
+
 selected_sizes = []
 
 if product_type in ["Bedframe", "Mattress"]:
@@ -135,12 +139,18 @@ if product_type in ["Bedframe", "Mattress"]:
     selected_sizes = st.multiselect(
         "Select Size",
         BED_SIZE_OPTIONS,
-        default=BED_SIZE_OPTIONS,
-        help=(
-            "价格输入顺序会根据这里显示的尺寸顺序："
-            "King、Queen、Super Single、Single"
-        )
+        default=BED_SIZE_OPTIONS
     )
+
+    if selected_sizes:
+        st.info(
+            "Price order: "
+            + " → ".join(selected_sizes)
+        )
+
+# ==========================
+# BEDFRAME VARIETY
+# ==========================
 
 bedframe_variety = []
 bedframe_plus_250_variety = []
@@ -150,7 +160,11 @@ if product_type == "Bedframe":
     bedframe_variety = st.multiselect(
         "Bedframe Variety",
         BEDFRAME_VARIETY_OPTIONS,
-        default=BEDFRAME_VARIETY_OPTIONS
+        default=[
+            "Embony",
+            "Wave",
+            "Loro"
+        ]
     )
 
     bedframe_plus_250_variety = st.multiselect(
@@ -179,44 +193,28 @@ if product_type == "Mattress":
 
     st.subheader("Mattress Price")
 
-    if selected_sizes:
-        st.info(
-            "Price order: "
-            + " → ".join(selected_sizes)
-        )
-
     bulk_input = st.text_area(
         "Paste Mattress Price",
         height=200,
         key="bulk_input",
-        placeholder="""
-2999
+        placeholder="""2999
 2599
 2299
-1999
-"""
+1999"""
     )
 
 elif product_type == "Bedframe":
 
     st.subheader("Bedframe Price")
 
-    if selected_sizes:
-        st.info(
-            "Price order: "
-            + " → ".join(selected_sizes)
-        )
-
     bulk_input = st.text_area(
         "Paste Bedframe Price",
         height=200,
         key="bulk_input",
-        placeholder="""
-2699
+        placeholder="""2699
 2499
 2199
-2099
-"""
+2099"""
     )
 
 else:
@@ -227,10 +225,8 @@ else:
         "Paste Excel Size + Price",
         height=200,
         key="bulk_input",
-        placeholder="""
-1MR (26")    3,790.00
-2MRR (26")   6,290.00
-"""
+        placeholder="""1MR (26")    3,790.00
+2MRR (26")   6,290.00"""
     )
 
 # ==========================
@@ -249,21 +245,25 @@ if bulk_input:
 
     if product_type in ["Bedframe", "Mattress"]:
 
-        for i, line in enumerate(lines):
+        for index, line in enumerate(lines):
 
-            if i >= len(selected_sizes):
+            if index >= len(selected_sizes):
                 break
 
             try:
-                price = int(
+
+                price_text = (
                     line
+                    .replace("RM", "")
                     .replace(",", "")
                     .replace(".00", "")
                     .strip()
                 )
 
+                price = int(price_text)
+
                 sizes_data.append({
-                    "size": selected_sizes[i],
+                    "size": selected_sizes[index],
                     "price": price
                 })
 
@@ -279,13 +279,17 @@ if bulk_input:
             if len(parts) >= 2:
 
                 try:
+
                     price_text = (
                         parts[-1]
+                        .replace("RM", "")
                         .replace(",", "")
                         .replace(".00", "")
+                        .strip()
                     )
 
                     price = int(price_text)
+
                     size = " ".join(parts[:-1])
 
                     sizes_data.append({
@@ -323,19 +327,33 @@ if st.button("Generate CSV"):
         st.error("Please enter Product Name.")
         st.stop()
 
+    if product_type in ["Bedframe", "Mattress"]:
+
+        if not selected_sizes:
+            st.error("Please select at least one size.")
+            st.stop()
+
+        if len(sizes_data) != len(selected_sizes):
+            st.error(
+                "价格数量必须和选择的尺寸数量一样。"
+            )
+            st.stop()
+
     if not sizes_data:
-        st.error("Please select size and enter valid prices.")
+        st.error("Please enter valid size and price.")
         st.stop()
 
     if product_type == "Bedframe" and not bedframe_variety:
-        st.error("Please select at least one Bedframe Variety.")
+        st.error(
+            "Please select at least one Bedframe Variety."
+        )
         st.stop()
 
     rows = []
 
     size_list = [
-        item["size"]
-        for item in sizes_data
+        size_item["size"]
+        for size_item in sizes_data
     ]
 
     # ==========================
@@ -354,7 +372,8 @@ if st.button("Generate CSV"):
             "Parent": "",
 
             "Attribute 1 name": "Size",
-            "Attribute 1 value(s)": ", ".join(size_list),
+            "Attribute 1 value(s)":
+                ", ".join(size_list),
 
             "Attribute 2 name": "Shipping",
             "Attribute 2 value(s)":
@@ -367,6 +386,36 @@ if st.button("Generate CSV"):
         }
 
     else:
+
+        if product_type == "Bedframe":
+
+            bedframe_series_values = []
+
+            for variety in bedframe_variety:
+
+                if variety == "Normal Fabric":
+                    series = "normal fabric"
+                else:
+                    series = "easy clean fabric"
+
+                if series not in bedframe_series_values:
+                    bedframe_series_values.append(series)
+
+            parent_series_value = "|".join(
+                bedframe_series_values
+            )
+
+            parent_variety_value = "|".join(
+                bedframe_variety
+            )
+
+        else:
+
+            parent_series_value = "easy clean"
+
+            parent_variety_value = (
+                "FG66151|FG66252|FG66353|Guardian"
+            )
 
         parent_row = {
             "ID": parent_id,
@@ -387,7 +436,8 @@ if st.button("Generate CSV"):
             "Parent": "",
 
             "Attribute 1 name": "seater",
-            "Attribute 1 value(s)": "|".join(size_list),
+            "Attribute 1 value(s)":
+                "|".join(size_list),
 
             "Attribute 2 name": "shipping",
             "Attribute 2 value(s)":
@@ -397,22 +447,12 @@ if st.button("Generate CSV"):
             "Attribute 3 value(s)": "fabric",
 
             "Attribute 4 name": "series",
-
             "Attribute 4 value(s)":
-                (
-                    "easy clean"
-                    if product_type == "Sofa"
-                    else "normal fabric|easy clean fabric"
-                ),
+                parent_series_value,
 
             "Attribute 5 name": "variety",
-
             "Attribute 5 value(s)":
-                (
-                    "FG66151|FG66252|FG66353|Guardian"
-                    if product_type == "Sofa"
-                    else "|".join(bedframe_variety)
-                ),
+                parent_variety_value,
 
             "Attribute 6 name": "color",
 
@@ -431,7 +471,7 @@ if st.button("Generate CSV"):
 
     rows.append(parent_row)
 
-    # Variation ID 从 Parent ID + 1 开始
+    # Parent 后的第一个 variation ID
     current_id = parent_id + 1
 
     # ==========================
@@ -451,11 +491,10 @@ if st.button("Generate CSV"):
                 "East Malaysia"
             ]:
 
-                price = (
-                    west_price
-                    if shipping == "West Malaysia"
-                    else east_price
-                )
+                if shipping == "West Malaysia":
+                    price = west_price
+                else:
+                    price = east_price
 
                 row = {
                     "ID": current_id,
@@ -481,7 +520,7 @@ if st.button("Generate CSV"):
 
                 rows.append(row)
 
-                # 每一个 variation ID 自动 +1
+                # 每生成一个 variation，ID +1
                 current_id += 1
 
     # ==========================
@@ -508,46 +547,38 @@ if st.button("Generate CSV"):
                     "East Malaysia"
                 ]:
 
-                    price = (
-                        west_price
-                        if shipping == "West Malaysia"
-                        else east_price
-                    )
+                    if shipping == "West Malaysia":
+                        price = west_price
+                    else:
+                        price = east_price
 
-                    # 只有手动选择的 Bedframe Variety 才加 RM250
+                    # 只有手动选择的 Bedframe Variety 加 RM250
                     if (
                         product_type == "Bedframe"
-                        and variety in bedframe_plus_250_variety
+                        and variety
+                        in bedframe_plus_250_variety
                     ):
                         price += 250
 
                     if product_type == "Bedframe":
 
-                        series_value = (
-                            "normal fabric"
-                            if variety == "Normal Fabric"
-                            else "easy clean fabric"
-                        )
+                        if variety == "Normal Fabric":
+                            series_value = "normal fabric"
+                        else:
+                            series_value = "easy clean fabric"
 
                     else:
-
                         series_value = "easy clean"
 
                     row = {
                         "ID": current_id,
-
                         "Type": "variation",
-
                         "SKU": "",
-
                         "Name": product_name,
-
                         "Description":
                             product_description,
-
                         "Published":
                             published_value,
-
                         "Parent":
                             f"id:{parent_id}",
 
@@ -599,7 +630,7 @@ if st.button("Generate CSV"):
 
                     rows.append(row)
 
-                    # 每一个 variation ID 自动 +1
+                    # 每生成一个 variation，ID +1
                     current_id += 1
 
     # ==========================
@@ -619,7 +650,7 @@ if st.button("Generate CSV"):
 
     st.download_button(
         "Download CSV",
-        csv,
+        data=csv,
         file_name=f"{product_name}.csv",
         mime="text/csv"
     )
