@@ -16,8 +16,8 @@ BEDFRAME_VARIETY_OPTIONS = [
     "Embony",
     "Wave",
     "Loro",
-    "Normal Fabric",
-    "Easy Clean Fabric"
+    "Easy Clean Fabric",
+    "Normal Fabric"
 ]
 
 BED_SIZE_OPTIONS = [
@@ -27,45 +27,74 @@ BED_SIZE_OPTIONS = [
     "Single"
 ]
 
-COLOR_VALUES = """FG66151 Beige, FG66151 Carolina Blue, FG66151 Cedar,
-FG66151 Dark Brown, FG66151 Dark Cyan, FG66151 Dark Grey,
-FG66151 Denim Blue, FG66151 Espresso, FG66151 Gold,
-FG66151 Grey, FG66151 Light Grey, FG66151 Onyx,
-FG66151 Peach, FG66151 Police Blue, FG66151 Prussian Blue,
-FG66151 Teal, FG66252 Beige, FG66252 Cedar,
-FG66252 Charcoal, FG66252 Dark Cyan, FG66252 Gold,
-FG66252 Granite, FG66252 Grey, FG66252 Light Grey,
-FG66252 Mahogany, FG66252 Navy Blue, FG66252 Onyx,
-FG66252 Red Orange, FG66353 Beige, FG66353 Brown,
-FG66353 Dark Blue, FG66353 Dark Cyan,
-FG66353 Denim Blue, FG66353 Forest Green,
-FG66353 Grey, FG66353 Greyish Blue,
-FG66353 Light Blue, FG66353 Mahogany,
-FG66353 Midnight Blue, FG66353 Onyx,
-FG66353 Teal, Guardian Beige,
-Guardian Cedar, Guardian Dark Blue,
-Guardian Dark Grey, Guardian Denim Blue,
-Guardian Gold, Guardian Grey,
-Guardian Khaki, Guardian Light Grey,
-Guardian Navy Blue, Guardian Peach,
-Guardian Teal"""
+# ==========================
+# SOFA / EASY CLEAN COLORS
+# ==========================
 
-BEDFRAME_COLOR_VALUES = """
-Wave Light Grey|Wave Grey|Wave Dark Grey|Wave Gold|
-Wave Cedar|Wave Peach|Wave Teal|Wave Olive Green|
-Wave Forest Green|Wave Dark Blue|Wave Slate|
+COLOR_VALUES = (
+    "FG66151 Beige, FG66151 Carolina Blue, FG66151 Cedar, "
+    "FG66151 Dark Brown, FG66151 Dark Cyan, FG66151 Dark Grey, "
+    "FG66151 Denim Blue, FG66151 Espresso, FG66151 Gold, "
+    "FG66151 Grey, FG66151 Light Grey, FG66151 Onyx, "
+    "FG66151 Peach, FG66151 Police Blue, FG66151 Prussian Blue, "
+    "FG66151 Teal, FG66252 Beige, FG66252 Cedar, "
+    "FG66252 Charcoal, FG66252 Dark Cyan, FG66252 Gold, "
+    "FG66252 Granite, FG66252 Grey, FG66252 Light Grey, "
+    "FG66252 Mahogany, FG66252 Navy Blue, FG66252 Onyx, "
+    "FG66252 Red Orange, FG66353 Beige, FG66353 Brown, "
+    "FG66353 Dark Blue, FG66353 Dark Cyan, "
+    "FG66353 Denim Blue, FG66353 Forest Green, "
+    "FG66353 Grey, FG66353 Greyish Blue, "
+    "FG66353 Light Blue, FG66353 Mahogany, "
+    "FG66353 Midnight Blue, FG66353 Onyx, "
+    "FG66353 Teal"
+)
 
-Loro Beige|Loro Silver|Loro Grey|Loro Bronze|
-Loro Teal|Loro Light Grey|Loro Granite|Loro Slate|
+# ==========================
+# BEDFRAME COLORS
+# ==========================
 
-Embony Beige|Embony Cedar|Embony Dark Beige|
-Embony Denim Blue|Embony Forest Green|
-Embony Gold|Embony Grey|Embony Grey Blue|
-Embony Khaki|Embony Light Grey|
-Embony Navy Blue|Embony Peach|
-Embony Silver Ash|Embony Slate|
-Embony Teal
-"""
+WAVE_COLOR_VALUES = (
+    "Wave Light Grey|Wave Grey|Wave Dark Grey|Wave Gold|"
+    "Wave Cedar|Wave Peach|Wave Teal|Wave Olive Green|"
+    "Wave Forest Green|Wave Dark Blue|Wave Slate"
+)
+
+LORO_COLOR_VALUES = (
+    "Loro Beige|Loro Silver|Loro Grey|Loro Bronze|"
+    "Loro Teal|Loro Light Grey|Loro Granite|Loro Slate"
+)
+
+EMBONY_COLOR_VALUES = (
+    "Embony Beige|Embony Cedar|Embony Dark Beige|"
+    "Embony Denim Blue|Embony Forest Green|"
+    "Embony Gold|Embony Grey|Embony Grey Blue|"
+    "Embony Khaki|Embony Light Grey|"
+    "Embony Navy Blue|Embony Peach|"
+    "Embony Silver Ash|Embony Slate|Embony Teal"
+)
+
+EASY_CLEAN_COLOR_VALUES = COLOR_VALUES.replace(", ", "|")
+
+NORMAL_FABRIC_COLOR_VALUES = (
+    "normal light gray|normal dark blue"
+)
+
+BEDFRAME_COLOR_MAP = {
+    "Wave": WAVE_COLOR_VALUES,
+    "Loro": LORO_COLOR_VALUES,
+    "Embony": EMBONY_COLOR_VALUES,
+    "Easy Clean Fabric": EASY_CLEAN_COLOR_VALUES,
+    "Normal Fabric": NORMAL_FABRIC_COLOR_VALUES
+}
+
+ALL_BEDFRAME_COLOR_VALUES = "|".join([
+    WAVE_COLOR_VALUES,
+    LORO_COLOR_VALUES,
+    EMBONY_COLOR_VALUES,
+    EASY_CLEAN_COLOR_VALUES,
+    NORMAL_FABRIC_COLOR_VALUES
+])
 
 # ==========================
 # PAGE
@@ -79,7 +108,11 @@ st.title("MPO/MELI New Product CSV")
 
 product_type = st.radio(
     "Product Type",
-    ["Sofa", "Bedframe", "Mattress"]
+    [
+        "Sofa",
+        "Bedframe",
+        "Mattress"
+    ]
 )
 
 if product_type == "Sofa":
@@ -90,6 +123,10 @@ if product_type == "Mattress":
 
 if product_type == "Bedframe":
     st.success("🛏️ Bedframe Mode")
+
+# ==========================
+# SESSION STATE
+# ==========================
 
 if "product_name" not in st.session_state:
     st.session_state.product_name = ""
@@ -121,7 +158,10 @@ product_name = st.text_input(
 
 visibility = st.radio(
     "Visibility",
-    ["Public", "Private"]
+    [
+        "Public",
+        "Private"
+    ]
 )
 
 # ==========================
@@ -130,19 +170,22 @@ visibility = st.radio(
 
 selected_sizes = []
 
-if product_type in ["Bedframe", "Mattress"]:
+if product_type in [
+    "Bedframe",
+    "Mattress"
+]:
 
-    selected_sizes_input = st.multiselect(
+    selected_size_input = st.multiselect(
         "Select Size",
         BED_SIZE_OPTIONS,
         default=BED_SIZE_OPTIONS
     )
 
-    # 保持固定的价格输入顺序
+    # 保持固定尺寸顺序
     selected_sizes = [
         size
         for size in BED_SIZE_OPTIONS
-        if size in selected_sizes_input
+        if size in selected_size_input
     ]
 
     if selected_sizes:
@@ -200,12 +243,10 @@ if product_type == "Mattress":
         "Paste Mattress Price",
         height=200,
         key="bulk_input",
-        placeholder="""
-2999
+        placeholder="""2999
 2599
 2299
-1999
-"""
+1999"""
     )
 
 elif product_type == "Bedframe":
@@ -216,12 +257,10 @@ elif product_type == "Bedframe":
         "Paste Bedframe Price",
         height=200,
         key="bulk_input",
-        placeholder="""
-2699
+        placeholder="""2699
 2499
 2199
-2099
-"""
+2099"""
     )
 
 else:
@@ -232,19 +271,28 @@ else:
         "Paste Excel Size + Price",
         height=200,
         key="bulk_input",
-        placeholder="""
-1MR (26")    3,790.00
-2MRR (26")   6,290.00
-"""
+        placeholder="""1MR (26")    3,790.00
+2MRR (26")   6,290.00"""
     )
+
+# ==========================
+# PROCESS SIZE + PRICE
+# ==========================
 
 sizes_data = []
 
 if bulk_input:
 
-    lines = bulk_input.strip().split("\n")
+    lines = [
+        line.strip()
+        for line in bulk_input.strip().split("\n")
+        if line.strip()
+    ]
 
-    if product_type in ["Bedframe", "Mattress"]:
+    if product_type in [
+        "Bedframe",
+        "Mattress"
+    ]:
 
         for i, line in enumerate(lines):
 
@@ -266,7 +314,7 @@ if bulk_input:
                     "price": price
                 })
 
-            except:
+            except ValueError:
                 pass
 
     else:
@@ -295,11 +343,11 @@ if bulk_input:
                         "price": price
                     })
 
-                except:
+                except ValueError:
                     pass
 
 # ==========================
-# GENERATE CSV
+# CLEAR ALL
 # ==========================
 
 if st.button("Clear All"):
@@ -315,32 +363,44 @@ if st.button("Clear All"):
 
     st.rerun()
 
+# ==========================
+# GENERATE CSV
+# ==========================
+
 if st.button("Generate CSV"):
 
-    if product_type in ["Bedframe", "Mattress"]:
+    if product_type in [
+        "Bedframe",
+        "Mattress"
+    ]:
 
         if not selected_sizes:
-            st.error("Please select at least one size.")
+            st.error(
+                "Please select at least one size."
+            )
             st.stop()
 
         if len(sizes_data) != len(selected_sizes):
             st.error(
-                "The number of prices must match "
-                "the number of selected sizes."
+                "Price quantity must match "
+                "the selected size quantity."
             )
             st.stop()
 
-    if product_type == "Bedframe" and not bedframe_variety:
-        st.error(
-            "Please select at least one Bedframe Variety."
-        )
-        st.stop()
+    if product_type == "Bedframe":
+
+        if not bedframe_variety:
+            st.error(
+                "Please select at least one "
+                "Bedframe Variety."
+            )
+            st.stop()
 
     rows = []
 
     size_list = [
-        s["size"]
-        for s in sizes_data
+        item["size"]
+        for item in sizes_data
     ]
 
     # ==========================
@@ -359,7 +419,8 @@ if st.button("Generate CSV"):
             "Parent": "",
 
             "Attribute 1 name": "Size",
-            "Attribute 1 value(s)": ", ".join(size_list),
+            "Attribute 1 value(s)":
+                ", ".join(size_list),
 
             "Attribute 2 name": "Shipping",
             "Attribute 2 value(s)":
@@ -373,43 +434,57 @@ if st.button("Generate CSV"):
 
     else:
 
-        # 保持原版字段结构，只调整 Bedframe 属性值
-        if product_type == "Bedframe":
+        if product_type == "Sofa":
 
-            bedframe_series_values = []
+            parent_series_value = "easy clean"
+
+            parent_variety_value = (
+                "FG66151|FG66252|FG66353|Guardian"
+            )
+
+            parent_color_value = COLOR_VALUES
+
+        else:
+
+            selected_series = []
 
             if "Normal Fabric" in bedframe_variety:
-                bedframe_series_values.append(
+                selected_series.append(
                     "normal fabric"
                 )
 
             if any(
-                variety in bedframe_variety
-                for variety in [
-                    "Embony",
-                    "Wave",
-                    "Loro",
-                    "Easy Clean Fabric"
-                ]
+                variety != "Normal Fabric"
+                for variety in bedframe_variety
             ):
-                bedframe_series_values.append(
+                selected_series.append(
                     "easy clean fabric"
                 )
 
             parent_series_value = "|".join(
-                bedframe_series_values
+                selected_series
             )
 
             parent_variety_value = "|".join(
                 bedframe_variety
             )
 
-        else:
+            selected_parent_colors = []
 
-            parent_series_value = "easy clean"
+            for variety in bedframe_variety:
 
-            parent_variety_value = (
-                "FG66151|FG66252|FG66353|Guardian"
+                variety_colors = BEDFRAME_COLOR_MAP.get(
+                    variety,
+                    ""
+                )
+
+                if variety_colors:
+                    selected_parent_colors.append(
+                        variety_colors
+                    )
+
+            parent_color_value = "|".join(
+                selected_parent_colors
             )
 
         parent_row = {
@@ -431,7 +506,8 @@ if st.button("Generate CSV"):
             "Parent": "",
 
             "Attribute 1 name": "seater",
-            "Attribute 1 value(s)": "|".join(size_list),
+            "Attribute 1 value(s)":
+                "|".join(size_list),
 
             "Attribute 2 name": "shipping",
             "Attribute 2 value(s)":
@@ -450,11 +526,7 @@ if st.button("Generate CSV"):
 
             "Attribute 6 name": "color",
             "Attribute 6 value(s)":
-                (
-                    COLOR_VALUES
-                    if product_type == "Sofa"
-                    else BEDFRAME_COLOR_VALUES
-                ),
+                parent_color_value,
 
             "Regular price": "",
 
@@ -462,22 +534,22 @@ if st.button("Generate CSV"):
             "Stock status": "instock"
         }
 
-    # Parent variable row 保持第一行
+    # Parent variable row
     rows.append(parent_row)
 
-    # Variation 从 Parent ID + 1 开始
+    # 第一个 variation ID = Parent ID + 1
     current_id = parent_id + 1
 
     # ==========================
-    # VARIATION ROWS
+    # MATTRESS VARIATIONS
     # ==========================
 
     if product_type == "Mattress":
 
-        for s in sizes_data:
+        for item in sizes_data:
 
-            size = s["size"]
-            west_price = s["price"]
+            size = item["size"]
+            west_price = item["price"]
             east_price = west_price + 1000
 
             for shipping in [
@@ -510,29 +582,29 @@ if st.button("Generate CSV"):
                     "Regular price": price,
 
                     "Stock": 10,
-
                     "Stock status": "instock"
                 }
 
                 rows.append(row)
 
-                # 每一个 variation ID 自动 +1
+                # 每个 variation ID 连续 +1
                 current_id += 1
+
+    # ==========================
+    # SOFA / BEDFRAME VARIATIONS
+    # ==========================
 
     else:
 
-        for s in sizes_data:
+        for item in sizes_data:
 
-            size = s["size"]
-            west_price = s["price"]
+            size = item["size"]
+            west_price = item["price"]
             east_price = west_price + 1000
 
             if product_type == "Sofa":
-
                 variety_list = VARIETY_OPTIONS
-
             else:
-
                 variety_list = bedframe_variety
 
             for variety in variety_list:
@@ -548,7 +620,8 @@ if st.button("Generate CSV"):
                         else east_price
                     )
 
-                    # 手动选择的 Bedframe Variety 才加 RM250
+                    # East Malaysia 已经在上面加 RM1000
+                    # 这里只处理手动选择的 RM250
                     if (
                         product_type == "Bedframe"
                         and variety
@@ -556,7 +629,6 @@ if st.button("Generate CSV"):
                     ):
                         price += 250
 
-                    # Bedframe Attribute 4
                     if product_type == "Bedframe":
 
                         if variety == "Normal Fabric":
@@ -566,22 +638,26 @@ if st.button("Generate CSV"):
                                 "easy clean fabric"
                             )
 
+                        color_value = (
+                            BEDFRAME_COLOR_MAP.get(
+                                variety,
+                                ""
+                            )
+                        )
+
                     else:
 
                         series_value = "easy clean"
+                        color_value = ""
 
                     row = {
-                        "ID":
-                            current_id,
+                        "ID": current_id,
 
-                        "Type":
-                            "variation",
+                        "Type": "variation",
 
-                        "SKU":
-                            "",
+                        "SKU": "",
 
-                        "Name":
-                            product_name,
+                        "Name": product_name,
 
                         "Description":
                             product_description,
@@ -626,13 +702,12 @@ if st.button("Generate CSV"):
                             "color",
 
                         "Attribute 6 value(s)":
-                            "",
+                            color_value,
 
                         "Regular price":
                             price,
 
-                        "Stock":
-                            10,
+                        "Stock": 10,
 
                         "Stock status":
                             "instock"
@@ -640,8 +715,12 @@ if st.button("Generate CSV"):
 
                     rows.append(row)
 
-                    # 每一个 variation ID 自动 +1
+                    # 每个 variation ID 连续 +1
                     current_id += 1
+
+    # ==========================
+    # CREATE CSV
+    # ==========================
 
     df = pd.DataFrame(rows)
 
@@ -654,7 +733,7 @@ if st.button("Generate CSV"):
 
     st.download_button(
         "Download CSV",
-        csv,
+        data=csv,
         file_name=f"{product_name}.csv",
         mime="text/csv"
     )
