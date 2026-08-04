@@ -15,7 +15,9 @@ VARIETY_OPTIONS = [
 BEDFRAME_VARIETY_OPTIONS = [
     "Embony",
     "Wave",
-    "Loro"
+    "Loro",
+    "Normal Fabric",
+    "Easy Clean Fabric"
 ]
 
 COLOR_VALUES = """FG66151 Beige, FG66151 Carolina Blue, FG66151 Cedar,
@@ -115,22 +117,22 @@ visibility = st.radio(
     ["Public", "Private"]
 )
 
+bedframe_variety = []
+bedframe_plus_250_variety = []
+
 if product_type == "Bedframe":
 
     bedframe_variety = st.multiselect(
         "Bedframe Variety",
-        [
-            "Embony",
-            "Wave",
-            "Loro"
-        ],
-        default=[
-            "Embony",
-            "Wave",
-            "Loro"
-        ]
+        BEDFRAME_VARIETY_OPTIONS,
+        default=BEDFRAME_VARIETY_OPTIONS
     )
 
+    bedframe_plus_250_variety = st.multiselect(
+        "Select Variety To Add RM250",
+        bedframe_variety,
+        default=[]
+    )
 
 product_description = st.text_area(
     "Product Description",
@@ -290,6 +292,7 @@ if bulk_input:
 # ==========================
 # GENERATE CSV
 # ==========================
+
 if st.button("Clear All"):
 
     for key in [
@@ -376,7 +379,7 @@ if st.button("Generate CSV"):
                 (
                     "FG66151|FG66252|FG66353|Guardian"
                     if product_type == "Sofa"
-                    else "Embony|Wave|Loro"
+                    else "|".join(bedframe_variety)
                 ),
 
             "Attribute 6 name": "color",
@@ -400,6 +403,7 @@ if st.button("Generate CSV"):
     # ==========================
     # VARIATION ROWS
     # ==========================
+
     if product_type == "Mattress":
 
         for s in sizes_data:
@@ -439,111 +443,117 @@ if st.button("Generate CSV"):
                     "Stock": 10,
 
                     "Stock status": "instock"
-
                 }
 
                 rows.append(row)
                 current_id += 1
 
     else:
-            for s in sizes_data:
 
-                size = s["size"]
-                west_price = s["price"]
-                east_price = west_price + 1000
+        for s in sizes_data:
 
-                if product_type == "Sofa":
+            size = s["size"]
+            west_price = s["price"]
+            east_price = west_price + 1000
 
-                    variety_list = VARIETY_OPTIONS
+            if product_type == "Sofa":
 
-                else:
+                variety_list = VARIETY_OPTIONS
 
-                    variety_list = BEDFRAME_VARIETY_OPTIONS
+            else:
 
-                for variety in variety_list:
+                variety_list = bedframe_variety
 
-                    for shipping in [
-                        "West Malaysia",
-                        "East Malaysia"
-                    ]:
+            for variety in variety_list:
 
-                        price = (
-                            west_price
-                            if shipping ==
-                               "West Malaysia"
-                            else east_price
-                        )
+                for shipping in [
+                    "West Malaysia",
+                    "East Malaysia"
+                ]:
 
-                        row = {
-                            "ID":
-                                current_id,
+                    price = (
+                        west_price
+                        if shipping == "West Malaysia"
+                        else east_price
+                    )
 
-                            "Type":
-                                "variation",
+                    # Bedframe 手动选择的 Variety 才加 RM250
+                    if (
+                        product_type == "Bedframe"
+                        and variety in bedframe_plus_250_variety
+                    ):
+                        price += 250
 
-                            "SKU":
-                                "",
+                    row = {
+                        "ID":
+                            current_id,
 
-                            "Name":
-                                product_name,
+                        "Type":
+                            "variation",
 
-                            "Description":
-                                product_description,
+                        "SKU":
+                            "",
 
-                            "Published":
-                                published_value,
+                        "Name":
+                            product_name,
 
-                            "Parent":
-                                f"id:{parent_id}",
+                        "Description":
+                            product_description,
 
-                            "Attribute 1 name":
-                                "seater",
+                        "Published":
+                            published_value,
 
-                            "Attribute 1 value(s)":
-                                size,
+                        "Parent":
+                            f"id:{parent_id}",
 
-                            "Attribute 2 name":
-                                "shipping",
+                        "Attribute 1 name":
+                            "seater",
 
-                            "Attribute 2 value(s)":
-                                shipping,
+                        "Attribute 1 value(s)":
+                            size,
 
-                            "Attribute 3 name":
-                                "material",
+                        "Attribute 2 name":
+                            "shipping",
 
-                            "Attribute 3 value(s)":
-                                "fabric",
+                        "Attribute 2 value(s)":
+                            shipping,
 
-                            "Attribute 4 name":
-                                "series",
+                        "Attribute 3 name":
+                            "material",
 
-                            "Attribute 4 value(s)":
-                                "easy clean",
+                        "Attribute 3 value(s)":
+                            "fabric",
 
-                            "Attribute 5 name":
-                                "variety",
+                        "Attribute 4 name":
+                            "series",
 
-                            "Attribute 5 value(s)":
-                                variety,
+                        "Attribute 4 value(s)":
+                            "easy clean",
 
-                            "Attribute 6 name":
-                                "color",
+                        "Attribute 5 name":
+                            "variety",
 
-                            "Attribute 6 value(s)":
-                                "",
+                        "Attribute 5 value(s)":
+                            variety,
 
-                            "Regular price":
-                                price,
+                        "Attribute 6 name":
+                            "color",
 
-                            "Stock":
-                                10,
+                        "Attribute 6 value(s)":
+                            "",
 
-                            "Stock status":
-                                "instock"
-                        }
+                        "Regular price":
+                            price,
 
-                        rows.append(row)
-                        current_id += 1
+                        "Stock":
+                            10,
+
+                        "Stock status":
+                            "instock"
+                    }
+
+                    rows.append(row)
+                    current_id += 1
 
     df = pd.DataFrame(rows)
 
