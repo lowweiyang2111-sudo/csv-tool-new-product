@@ -2,6 +2,7 @@ import re
 import streamlit as st
 import pandas as pd
 
+
 # =========================================================
 # FIXED VALUES
 # =========================================================
@@ -10,45 +11,134 @@ SOFA_VARIETIES = [
     "FG66151",
     "FG66252",
     "FG66353",
-    "Guardian",
+    "Guardian"
 ]
 
-SOFA_COLOR_VALUES = """FG66151 Beige, FG66151 Carolina Blue, FG66151 Cedar,
-FG66151 Dark Brown, FG66151 Dark Cyan, FG66151 Dark Grey,
-FG66151 Denim Blue, FG66151 Espresso, FG66151 Gold,
-FG66151 Grey, FG66151 Light Grey, FG66151 Onyx,
-FG66151 Peach, FG66151 Police Blue, FG66151 Prussian Blue,
-FG66151 Teal, FG66252 Beige, FG66252 Cedar,
-FG66252 Charcoal, FG66252 Dark Cyan, FG66252 Gold,
-FG66252 Granite, FG66252 Grey, FG66252 Light Grey,
-FG66252 Mahogany, FG66252 Navy Blue, FG66252 Onyx,
-FG66252 Red Orange, FG66353 Beige, FG66353 Brown,
-FG66353 Dark Blue, FG66353 Dark Cyan,
-FG66353 Denim Blue, FG66353 Forest Green,
-FG66353 Grey, FG66353 Greyish Blue,
-FG66353 Light Blue, FG66353 Mahogany,
-FG66353 Midnight Blue, FG66353 Onyx,
-FG66353 Teal, Guardian Beige,
-Guardian Cedar, Guardian Dark Blue,
-Guardian Dark Grey, Guardian Denim Blue,
-Guardian Gold, Guardian Grey,
-Guardian Khaki, Guardian Light Grey,
-Guardian Navy Blue, Guardian Peach,
-Guardian Teal"""
+SOFA_COLORS = [
+    "FG66151 Beige",
+    "FG66151 Carolina Blue",
+    "FG66151 Cedar",
+    "FG66151 Dark Brown",
+    "FG66151 Dark Cyan",
+    "FG66151 Dark Grey",
+    "FG66151 Denim Blue",
+    "FG66151 Espresso",
+    "FG66151 Gold",
+    "FG66151 Grey",
+    "FG66151 Light Grey",
+    "FG66151 Onyx",
+    "FG66151 Peach",
+    "FG66151 Police Blue",
+    "FG66151 Prussian Blue",
+    "FG66151 Teal",
 
-SOFA_COLOR_VALUES = " ".join(
-    line.strip()
-    for line in SOFA_COLOR_VALUES.splitlines()
-)
+    "FG66252 Beige",
+    "FG66252 Cedar",
+    "FG66252 Charcoal",
+    "FG66252 Dark Cyan",
+    "FG66252 Gold",
+    "FG66252 Granite",
+    "FG66252 Grey",
+    "FG66252 Light Grey",
+    "FG66252 Mahogany",
+    "FG66252 Navy Blue",
+    "FG66252 Onyx",
+    "FG66252 Red Orange",
+
+    "FG66353 Beige",
+    "FG66353 Brown",
+    "FG66353 Dark Blue",
+    "FG66353 Dark Cyan",
+    "FG66353 Denim Blue",
+    "FG66353 Forest Green",
+    "FG66353 Grey",
+    "FG66353 Greyish Blue",
+    "FG66353 Light Blue",
+    "FG66353 Mahogany",
+    "FG66353 Midnight Blue",
+    "FG66353 Onyx",
+    "FG66353 Teal",
+
+    "Guardian Beige",
+    "Guardian Cedar",
+    "Guardian Dark Blue",
+    "Guardian Dark Grey",
+    "Guardian Denim Blue",
+    "Guardian Gold",
+    "Guardian Grey",
+    "Guardian Khaki",
+    "Guardian Light Grey",
+    "Guardian Navy Blue",
+    "Guardian Peach",
+    "Guardian Teal"
+]
+
 
 BEDFRAME_VARIETIES = [
     "Embony",
     "Wave",
-    "Loro",
+    "Loro"
 ]
 
+BEDFRAME_COLORS = [
+    "Wave Light Grey",
+    "Wave Grey",
+    "Wave Dark Grey",
+    "Wave Gold",
+    "Wave Cedar",
+    "Wave Peach",
+    "Wave Teal",
+    "Wave Olive Green",
+    "Wave Forest Green",
+    "Wave Dark Blue",
+    "Wave Slate",
+
+    "Loro Beige",
+    "Loro Silver",
+    "Loro Grey",
+    "Loro Bronze",
+    "Loro Teal",
+    "Loro Light Grey",
+    "Loro Granite",
+    "Loro Slate",
+
+    "Embony Beige",
+    "Embony Cedar",
+    "Embony Dark Beige",
+    "Embony Denim Blue",
+    "Embony Forest Green",
+    "Embony Gold",
+    "Embony Grey",
+    "Embony Grey Blue",
+    "Embony Khaki",
+    "Embony Light Grey",
+    "Embony Navy Blue",
+    "Embony Peach",
+    "Embony Silver Ash",
+    "Embony Slate",
+    "Embony Teal"
+]
+
+
+# Bedframe价格复制顺序
+BEDFRAME_SIZE_ORDER = [
+    "King",
+    "Queen",
+    "Super Single",
+    "Single"
+]
+
+# Mattress显示顺序
+MATTRESS_SIZE_ORDER = [
+    "Single",
+    "Super Single",
+    "Queen",
+    "King"
+]
+
+
 # =========================================================
-# LATEST WORDPRESS CSV COLUMNS
+# CSV COLUMNS
 # =========================================================
 
 SOFA_COLUMNS = [
@@ -73,8 +163,9 @@ SOFA_COLUMNS = [
     "Attribute 6 value(s)",
     "Regular price",
     "Stock",
-    "In stock?",
+    "In stock?"
 ]
+
 
 MATTRESS_COLUMNS = [
     "ID",
@@ -92,14 +183,18 @@ MATTRESS_COLUMNS = [
     "Attribute 3 value(s)",
     "Regular price",
     "Stock",
-    "In stock?",
+    "In stock?"
 ]
 
+
+# Bedframe最新版 + 你要求新增 Published / Visibility
 BEDFRAME_COLUMNS = [
     "ID",
     "Name",
     "Type",
     "Categories",
+    "Published",
+    "Visibility in catalog",
     "Attribute 1 name",
     "Attribute 1 value(s)",
     "Attribute 4 name",
@@ -112,11 +207,12 @@ BEDFRAME_COLUMNS = [
     "Stock",
     "In stock?",
     "Parent",
-    "SKU",
+    "SKU"
 ]
 
+
 # =========================================================
-# HELPER FUNCTIONS
+# HELPERS
 # =========================================================
 
 def parse_price(text):
@@ -144,14 +240,6 @@ def parse_price(text):
 
 
 def parse_sofa_size_price(text):
-    """
-    Sofa:
-    copy Size + Price from Excel.
-
-    Example:
-    2LA + RADB (28")    4,590.00
-    1S (28")            2,990.00
-    """
 
     result = []
     invalid = []
@@ -178,7 +266,7 @@ def parse_sofa_size_price(text):
             ).strip()
 
             if not size:
-                raise ValueError("Missing size")
+                raise ValueError()
 
             result.append({
                 "size": size,
@@ -186,19 +274,13 @@ def parse_sofa_size_price(text):
             })
 
         except Exception:
+
             invalid.append(raw_line)
 
     return result, invalid
 
 
-def parse_price_only(text, sizes):
-    """
-    For Mattress / Bedframe.
-
-    Only paste price:
-    2699
-    2499
-    """
+def parse_price_only(text, selected_sizes):
 
     price_lines = [
         line.strip()
@@ -206,11 +288,15 @@ def parse_price_only(text, sizes):
         if line.strip()
     ]
 
-    if len(price_lines) != len(sizes):
+    if not selected_sizes:
+        return [], "请先选择至少一个 Size。"
+
+    if len(price_lines) != len(selected_sizes):
 
         return [], (
-            f"需要 {len(sizes)} 个价格，"
-            f"但目前贴了 {len(price_lines)} 个。"
+            f"你选择了 {len(selected_sizes)} 个 Size，"
+            f"所以需要贴 {len(selected_sizes)} 个价格。"
+            f"现在只有 {len(price_lines)} 个。"
         )
 
     result = []
@@ -218,25 +304,52 @@ def parse_price_only(text, sizes):
     try:
 
         for size, price_line in zip(
-            sizes,
+            selected_sizes,
             price_lines
         ):
 
             result.append({
                 "size": size,
-                "price": parse_price(
-                    price_line
-                )
+                "price": parse_price(price_line)
             })
 
     except Exception:
 
         return [], (
             "有价格无法读取。"
-            "请使用例如 2,699.00 或 2699。"
+            "请使用例如 2699 或 2,699.00。"
         )
 
     return result, None
+
+
+def parse_custom_colors(text):
+
+    if not text.strip():
+        return []
+
+    values = re.split(
+        r"[\n,]+",
+        text
+    )
+
+    return [
+        value.strip()
+        for value in values
+        if value.strip()
+    ]
+
+
+def unique_list(values):
+
+    result = []
+
+    for value in values:
+
+        if value not in result:
+            result.append(value)
+
+    return result
 
 
 def safe_filename(name):
@@ -251,7 +364,7 @@ def safe_filename(name):
 
 
 # =========================================================
-# ID / SKU LOGIC
+# ID / SKU SYSTEM
 # =========================================================
 
 def get_id_value(
@@ -260,15 +373,12 @@ def get_id_value(
     variation_index=None
 ):
 
-    # WordPress generate ID automatically
-    if id_mode == "WordPress Auto ID":
+    if id_mode == "Auto ID":
         return ""
 
-    # Parent row
     if variation_index is None:
         return int(parent_id)
 
-    # Variation +1
     return int(parent_id) + variation_index
 
 
@@ -278,11 +388,9 @@ def get_parent_reference(
     main_sku
 ):
 
-    # New WordPress method
-    if id_mode == "WordPress Auto ID":
+    if id_mode == "Auto ID":
         return main_sku.strip()
 
-    # Old/manual method
     return f"id:{int(parent_id)}"
 
 
@@ -291,28 +399,41 @@ def get_parent_sku(
     main_sku
 ):
 
-    if id_mode == "WordPress Auto ID":
+    if id_mode == "Auto ID":
         return main_sku.strip()
 
     return ""
 
 
 # =========================================================
-# CLEAR ALL
+# CLEAR
 # =========================================================
 
 def clear_form():
 
-    keys_to_clear = [
+    keys = [
         "product_name",
         "main_sku",
         "parent_id",
+
         "sofa_bulk",
         "bedframe_bulk",
         "mattress_bulk",
+
+        "sofa_extra_colors",
+        "bedframe_extra_colors",
+
+        "sofa_varieties",
+        "sofa_colors",
+
+        "bedframe_varieties",
+        "bedframe_colors",
+
+        "bedframe_sizes",
+        "mattress_sizes"
     ]
 
-    for key in keys_to_clear:
+    for key in keys:
 
         if key in st.session_state:
             del st.session_state[key]
@@ -328,7 +449,9 @@ def generate_sofa(
     size_data,
     id_mode,
     parent_id,
-    main_sku
+    main_sku,
+    varieties,
+    colors
 ):
 
     rows = []
@@ -338,17 +461,11 @@ def generate_sofa(
         for item in size_data
     ]
 
-    parent_reference = (
-        get_parent_reference(
-            id_mode,
-            parent_id,
-            main_sku
-        )
+    parent_reference = get_parent_reference(
+        id_mode,
+        parent_id,
+        main_sku
     )
-
-    # ==========================
-    # SOFA PARENT
-    # ==========================
 
     parent_row = {
 
@@ -407,15 +524,13 @@ def generate_sofa(
             "Variety",
 
         "Attribute 5 value(s)":
-            ", ".join(
-                SOFA_VARIETIES
-            ),
+            ", ".join(varieties),
 
         "Attribute 6 name":
             "Color",
 
         "Attribute 6 value(s)":
-            SOFA_COLOR_VALUES,
+            ", ".join(colors),
 
         "Regular price":
             "",
@@ -431,14 +546,9 @@ def generate_sofa(
 
     variation_index = 1
 
-    # ==========================
-    # SOFA VARIATIONS
-    # ==========================
-
     for item in size_data:
 
         size = item["size"]
-
         west_price = item["price"]
 
         for shipping in [
@@ -446,15 +556,13 @@ def generate_sofa(
             "East Malaysia"
         ]:
 
-            if shipping == "West Malaysia":
+            price = (
+                west_price
+                if shipping == "West Malaysia"
+                else west_price + 1000
+            )
 
-                price = west_price
-
-            else:
-
-                price = west_price + 1000
-
-            for variety in SOFA_VARIETIES:
+            for variety in varieties:
 
                 row = {
 
@@ -545,10 +653,13 @@ def generate_sofa(
 
 def generate_bedframe(
     name,
+    published,
     size_data,
     id_mode,
     parent_id,
-    main_sku
+    main_sku,
+    varieties,
+    colors
 ):
 
     rows = []
@@ -558,17 +669,11 @@ def generate_bedframe(
         for item in size_data
     ]
 
-    parent_reference = (
-        get_parent_reference(
-            id_mode,
-            parent_id,
-            main_sku
-        )
+    parent_reference = get_parent_reference(
+        id_mode,
+        parent_id,
+        main_sku
     )
-
-    # ==========================
-    # BEDFRAME PARENT
-    # ==========================
 
     parent_row = {
 
@@ -586,6 +691,12 @@ def generate_bedframe(
 
         "Categories":
             "Bedframe",
+
+        "Published":
+            published,
+
+        "Visibility in catalog":
+            "visible",
 
         "Attribute 1 name":
             "Size",
@@ -609,9 +720,7 @@ def generate_bedframe(
             "Variety",
 
         "Attribute 6 value(s)":
-            ",".join(
-                BEDFRAME_VARIETIES
-            ),
+            ",".join(varieties),
 
         "Regular price":
             "",
@@ -632,18 +741,21 @@ def generate_bedframe(
             )
     }
 
+    # 如果要保留 Color，
+    # Bedframe 最新 sample 没有独立 Color column。
+    # 所以目前选择的 Color 不会另外生成成 variation，
+    # 但会保存在下面新增的动态 column。
+    #
+    # WordPress importer 可以按 column 名 mapping。
+    parent_row["Color"] = ", ".join(colors)
+
     rows.append(parent_row)
 
     variation_index = 1
 
-    # ==========================
-    # BEDFRAME VARIATIONS
-    # ==========================
-
     for item in size_data:
 
         size = item["size"]
-
         west_price = item["price"]
 
         for shipping in [
@@ -651,16 +763,13 @@ def generate_bedframe(
             "East Malaysia"
         ]:
 
-            if shipping == "West Malaysia":
+            price = (
+                west_price
+                if shipping == "West Malaysia"
+                else west_price + 1000
+            )
 
-                price = west_price
-
-            else:
-
-                # Your company rule
-                price = west_price + 1000
-
-            for variety in BEDFRAME_VARIETIES:
+            for variety in varieties:
 
                 row = {
 
@@ -679,6 +788,12 @@ def generate_bedframe(
 
                     "Categories":
                         "Bedframe",
+
+                    "Published":
+                        published,
+
+                    "Visibility in catalog":
+                        "visible",
 
                     "Attribute 1 name":
                         "Size",
@@ -717,6 +832,9 @@ def generate_bedframe(
                         parent_reference,
 
                     "SKU":
+                        "",
+
+                    "Color":
                         ""
                 }
 
@@ -724,9 +842,13 @@ def generate_bedframe(
 
                 variation_index += 1
 
+    bedframe_columns = BEDFRAME_COLUMNS + [
+        "Color"
+    ]
+
     return pd.DataFrame(
         rows,
-        columns=BEDFRAME_COLUMNS
+        columns=bedframe_columns
     )
 
 
@@ -750,17 +872,11 @@ def generate_mattress(
         for item in size_data
     ]
 
-    parent_reference = (
-        get_parent_reference(
-            id_mode,
-            parent_id,
-            main_sku
-        )
+    parent_reference = get_parent_reference(
+        id_mode,
+        parent_id,
+        main_sku
     )
-
-    # ==========================
-    # MATTRESS PARENT
-    # ==========================
 
     parent_row = {
 
@@ -823,14 +939,9 @@ def generate_mattress(
 
     variation_index = 1
 
-    # ==========================
-    # MATTRESS VARIATIONS
-    # ==========================
-
     for item in size_data:
 
         size = item["size"]
-
         west_price = item["price"]
 
         for shipping in [
@@ -838,13 +949,11 @@ def generate_mattress(
             "East Malaysia"
         ]:
 
-            if shipping == "West Malaysia":
-
-                price = west_price
-
-            else:
-
-                price = west_price + 1000
+            price = (
+                west_price
+                if shipping == "West Malaysia"
+                else west_price + 1000
+            )
 
             row = {
 
@@ -920,9 +1029,8 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title(
-    "MPO/MELI New Product CSV"
-)
+st.title("MPO/MELI New Product CSV")
+
 
 # =========================================================
 # PRODUCT TYPE
@@ -935,33 +1043,48 @@ product_type = st.radio(
         "Bedframe",
         "Mattress"
     ],
-    horizontal=True,
-    key="product_type"
+    horizontal=True
 )
+
 
 # =========================================================
 # ID METHOD
 # =========================================================
 
+st.subheader("WordPress ID Method")
+
 id_mode = st.radio(
-    "WordPress ID Method",
+    "Choose ID Method",
     [
-        "WordPress Auto ID",
+        "Auto ID",
         "Manual ID"
     ],
     horizontal=True,
-    key="id_mode",
     help=(
-        "Auto ID: ID 留空，Variable SKU 必填，"
-        "Variation Parent 跟 Variable SKU。\n\n"
-        "Manual ID: 自己填 Parent ID，"
-        "Variation ID 自动 +1，"
+        "Auto ID：ID 留空，WordPress 自动生成。"
+        "Main Variable SKU 必填，Variation Parent 跟 SKU。\n\n"
+        "Manual ID：自己输入 Parent ID，"
+        "后面 variation ID 自动 +1，"
         "Parent = id:xxx。"
     )
 )
 
+if id_mode == "Auto ID":
+
+    st.caption(
+        "推荐用于新增产品："
+        "WordPress 自动生成 ID。"
+    )
+
+else:
+
+    st.caption(
+        "适合需要自己控制 ID 的情况。"
+    )
+
+
 # =========================================================
-# PRODUCT NAME
+# BASIC INFO
 # =========================================================
 
 product_name = st.text_input(
@@ -969,20 +1092,13 @@ product_name = st.text_input(
     key="product_name"
 )
 
-# =========================================================
-# AUTO ID / MANUAL ID
-# =========================================================
 
-if id_mode == "WordPress Auto ID":
+if id_mode == "Auto ID":
 
     main_sku = st.text_input(
-        "Main Variable SKU (Required)",
+        "Main Variable SKU",
         key="main_sku",
-        placeholder="Example: AUTUMN-BEDFRAME",
-        help=(
-            "只有 main variable 需要 SKU。"
-            "Variation SKU 会自动留空。"
-        )
+        placeholder="Example: AUTUMN-BEDFRAME"
     )
 
     parent_id = None
@@ -999,52 +1115,86 @@ else:
 
     main_sku = ""
 
-# =========================================================
-# PUBLIC / PRIVATE
-# =========================================================
-
-if product_type in [
-    "Sofa",
-    "Mattress"
-]:
-
-    visibility = st.radio(
-        "Product Status",
-        [
-            "Public",
-            "Private"
-        ],
-        horizontal=True,
-        key="visibility"
-    )
-
-    published_value = (
-        1
-        if visibility == "Public"
-        else 0
-    )
-
-else:
-
-    # Latest Bedframe template
-    # does not contain Published column
-    published_value = 1
 
 # =========================================================
-# SIZE / PRICE INPUT
+# PUBLIC / PRIVATE — ALL PRODUCTS
+# =========================================================
+
+visibility = st.radio(
+    "Product Status",
+    [
+        "Public",
+        "Private"
+    ],
+    horizontal=True
+)
+
+published_value = (
+    1
+    if visibility == "Public"
+    else 0
+)
+
+
+# =========================================================
+# PRODUCT-SPECIFIC UI
 # =========================================================
 
 size_data = []
-
 parse_error = None
-
 invalid_lines = []
+
 
 # =========================================================
 # SOFA
 # =========================================================
 
 if product_type == "Sofa":
+
+    st.subheader("Sofa Fabric / Variety")
+
+    selected_sofa_varieties = st.multiselect(
+        "Choose Variety",
+        SOFA_VARIETIES,
+        default=SOFA_VARIETIES,
+        key="sofa_varieties"
+    )
+
+    # 只显示已选择布料系列的颜色
+    available_sofa_colors = [
+        color
+        for color in SOFA_COLORS
+        if any(
+            color.startswith(
+                variety + " "
+            )
+            for variety in selected_sofa_varieties
+        )
+    ]
+
+    st.subheader("Sofa Colors")
+
+    selected_sofa_colors = st.multiselect(
+        "Choose Available Colors",
+        available_sofa_colors,
+        default=available_sofa_colors,
+        key="sofa_colors"
+    )
+
+    sofa_extra_colors = st.text_area(
+        "Add New Colors (Optional)",
+        key="sofa_extra_colors",
+        placeholder="""Example:
+FG66151 Cream
+Guardian Blue Grey"""
+    )
+
+    final_sofa_colors = unique_list(
+        selected_sofa_colors
+        + parse_custom_colors(
+            sofa_extra_colors
+        )
+    )
 
     st.subheader(
         "Sofa Size & West Malaysia Price"
@@ -1065,72 +1215,107 @@ if product_type == "Sofa":
         )
     )
 
+
 # =========================================================
 # BEDFRAME
 # =========================================================
 
 elif product_type == "Bedframe":
 
-    st.subheader(
-        "Bedframe West Malaysia Price"
+    st.subheader("Bedframe Variety")
+
+    selected_bedframe_varieties = (
+        st.multiselect(
+            "Choose Variety",
+            BEDFRAME_VARIETIES,
+            default=BEDFRAME_VARIETIES,
+            key="bedframe_varieties"
+        )
     )
 
-    st.caption(
-        "2 个价格：King → Queen\n"
-        "4 个价格：King → Queen → "
-        "Super Single → Single"
+    available_bedframe_colors = [
+        color
+        for color in BEDFRAME_COLORS
+        if any(
+            color.startswith(
+                variety + " "
+            )
+            for variety
+            in selected_bedframe_varieties
+        )
+    ]
+
+    st.subheader("Bedframe Colors")
+
+    selected_bedframe_colors = (
+        st.multiselect(
+            "Choose Available Colors",
+            available_bedframe_colors,
+            default=available_bedframe_colors,
+            key="bedframe_colors"
+        )
     )
+
+    bedframe_extra_colors = st.text_area(
+        "Add New Colors (Optional)",
+        key="bedframe_extra_colors",
+        placeholder="""Example:
+Wave Cream
+Embony Light Beige"""
+    )
+
+    final_bedframe_colors = unique_list(
+        selected_bedframe_colors
+        + parse_custom_colors(
+            bedframe_extra_colors
+        )
+    )
+
+    st.subheader("Bedframe Sizes")
+
+    selected_raw = st.multiselect(
+        "Choose Size",
+        BEDFRAME_SIZE_ORDER,
+        default=[
+            "King",
+            "Queen"
+        ],
+        key="bedframe_sizes"
+    )
+
+    # 强制按照 K Q SS S 顺序
+    selected_bedframe_sizes = [
+        size
+        for size in BEDFRAME_SIZE_ORDER
+        if size in selected_raw
+    ]
+
+    if selected_bedframe_sizes:
+
+        st.info(
+            "Paste prices in this order: "
+            + " → ".join(
+                selected_bedframe_sizes
+            )
+        )
 
     bedframe_bulk = st.text_area(
-        "Paste Price Only",
+        "Paste West Malaysia Price Only",
         height=180,
         key="bedframe_bulk",
         placeholder="""2,699.00
-2,499.00
-2,199.00
-2,099.00"""
+2,499.00"""
     )
 
-    price_count = len([
-        x
-        for x in bedframe_bulk.splitlines()
-        if x.strip()
-    ])
-
-    if price_count == 2:
+    if bedframe_bulk.strip():
 
         size_data, parse_error = (
             parse_price_only(
                 bedframe_bulk,
-                [
-                    "King",
-                    "Queen"
-                ]
+                selected_bedframe_sizes
             )
         )
 
-    elif price_count == 4:
-
-        size_data, parse_error = (
-            parse_price_only(
-                bedframe_bulk,
-                [
-                    "King",
-                    "Queen",
-                    "Super Single",
-                    "Single"
-                ]
-            )
-        )
-
-    elif price_count > 0:
-
-        parse_error = (
-            "Bedframe 只接受：\n"
-            "2 个价格（King、Queen）\n"
-            "或 4 个价格"
-            "（King、Queen、Super Single、Single）。"
-        )
 
 # =========================================================
 # MATTRESS
@@ -1138,53 +1323,39 @@ elif product_type == "Bedframe":
 
 else:
 
-    st.subheader(
-        "Mattress West Malaysia Price"
-    )
+    st.subheader("Mattress Sizes")
 
-    mattress_size_set = st.radio(
-        "Mattress Sizes",
-        [
-            "Queen + King",
-            "Single + Super Single + Queen + King"
+    selected_raw = st.multiselect(
+        "Choose Size",
+        MATTRESS_SIZE_ORDER,
+        default=[
+            "Queen",
+            "King"
         ],
-        horizontal=True,
-        key="mattress_size_set"
+        key="mattress_sizes"
     )
 
-    if mattress_size_set == "Queen + King":
+    selected_mattress_sizes = [
+        size
+        for size in MATTRESS_SIZE_ORDER
+        if size in selected_raw
+    ]
 
-        mattress_sizes = [
-            "Queen",
-            "King"
-        ]
+    if selected_mattress_sizes:
 
-        mattress_placeholder = """1,599.00
-2,599.00"""
-
-    else:
-
-        mattress_sizes = [
-            "Single",
-            "Super Single",
-            "Queen",
-            "King"
-        ]
-
-        mattress_placeholder = """1,099.00
-1,299.00
-1,599.00
-2,599.00"""
-
-    st.caption(
-        "价格顺序必须跟选择的 Size 顺序一致。"
-    )
+        st.info(
+            "Paste prices in this order: "
+            + " → ".join(
+                selected_mattress_sizes
+            )
+        )
 
     mattress_bulk = st.text_area(
-        "Paste Price Only",
+        "Paste West Malaysia Price Only",
         height=180,
         key="mattress_bulk",
-        placeholder=mattress_placeholder
+        placeholder="""1,599.00
+2,599.00"""
     )
 
     if mattress_bulk.strip():
@@ -1192,12 +1363,13 @@ else:
         size_data, parse_error = (
             parse_price_only(
                 mattress_bulk,
-                mattress_sizes
+                selected_mattress_sizes
             )
         )
 
+
 # =========================================================
-# ERROR
+# ERRORS / PREVIEW
 # =========================================================
 
 if invalid_lines:
@@ -1209,19 +1381,15 @@ if invalid_lines:
         )
     )
 
+
 if parse_error:
 
-    st.error(
-        parse_error
-    )
+    st.error(parse_error)
 
-# =========================================================
-# PRICE PREVIEW
-# =========================================================
 
 if size_data:
 
-    preview_df = pd.DataFrame([
+    preview = pd.DataFrame([
         {
             "Size":
                 item["size"],
@@ -1235,11 +1403,14 @@ if size_data:
         for item in size_data
     ])
 
+    st.subheader("Price Preview")
+
     st.dataframe(
-        preview_df,
+        preview,
         use_container_width=True,
         hide_index=True
     )
+
 
 # =========================================================
 # BUTTONS
@@ -1255,6 +1426,7 @@ with col1:
         use_container_width=True
     )
 
+
 with col2:
 
     st.button(
@@ -1262,6 +1434,7 @@ with col2:
         on_click=clear_form,
         use_container_width=True
     )
+
 
 # =========================================================
 # GENERATE
@@ -1278,34 +1451,52 @@ if generate_clicked:
         )
 
     if (
-        id_mode == "WordPress Auto ID"
+        id_mode == "Auto ID"
         and not main_sku.strip()
     ):
 
         errors.append(
-            "Auto ID 模式必须填写 "
-            "Main Variable SKU。"
+            "Auto ID 模式必须填写 Main Variable SKU。"
         )
 
     if not size_data:
 
         errors.append(
-            "没有读取到有效的 Size / Price。"
+            "没有有效的 Size / Price。"
         )
 
     if parse_error:
 
-        errors.append(
-            parse_error
-        )
+        errors.append(parse_error)
+
+    if product_type == "Sofa":
+
+        if not selected_sofa_varieties:
+            errors.append(
+                "Sofa 至少选择一个 Variety。"
+            )
+
+        if not final_sofa_colors:
+            errors.append(
+                "Sofa 至少选择一个 Color。"
+            )
+
+    if product_type == "Bedframe":
+
+        if not selected_bedframe_varieties:
+            errors.append(
+                "Bedframe 至少选择一个 Variety。"
+            )
+
+        if not final_bedframe_colors:
+            errors.append(
+                "Bedframe 至少选择一个 Color。"
+            )
 
     if errors:
 
         for error in errors:
-
-            st.error(
-                error
-            )
+            st.error(error)
 
     else:
 
@@ -1321,7 +1512,9 @@ if generate_clicked:
                 size_data,
                 id_mode,
                 parent_id,
-                main_sku
+                main_sku,
+                selected_sofa_varieties,
+                final_sofa_colors
             )
 
         # ==========================
@@ -1332,10 +1525,13 @@ if generate_clicked:
 
             df = generate_bedframe(
                 product_name.strip(),
+                published_value,
                 size_data,
                 id_mode,
                 parent_id,
-                main_sku
+                main_sku,
+                selected_bedframe_varieties,
+                final_bedframe_colors
             )
 
         # ==========================
@@ -1353,10 +1549,6 @@ if generate_clicked:
                 main_sku
             )
 
-        # ==========================
-        # EXPORT
-        # ==========================
-
         csv_bytes = (
             df
             .to_csv(
@@ -1368,12 +1560,12 @@ if generate_clicked:
         )
 
         st.success(
-            f"CSV Generated — "
-            f"{len(df) - 1} variation rows"
+            f"CSV Generated! "
+            f"{len(df) - 1} variations"
         )
 
         st.dataframe(
-            df.head(12),
+            df.head(15),
             use_container_width=True,
             hide_index=True
         )
@@ -1382,8 +1574,7 @@ if generate_clicked:
             "Download CSV",
             data=csv_bytes,
             file_name=(
-                f"{safe_filename(product_name)} "
-                f"Import.csv"
+                f"{safe_filename(product_name)} Import.csv"
             ),
             mime="text/csv",
             use_container_width=True
