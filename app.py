@@ -147,18 +147,37 @@ FURNITURE_COLUMNS = [
     "Visibility in catalog",
     "Categories",
     "Parent",
+
     "Attribute 1 name",
     "Attribute 1 value(s)",
+    "Attribute 1 visible",
+    "Attribute 1 global",
+
     "Attribute 2 name",
     "Attribute 2 value(s)",
+    "Attribute 2 visible",
+    "Attribute 2 global",
+
     "Attribute 3 name",
     "Attribute 3 value(s)",
+    "Attribute 3 visible",
+    "Attribute 3 global",
+
     "Attribute 4 name",
     "Attribute 4 value(s)",
+    "Attribute 4 visible",
+    "Attribute 4 global",
+
     "Attribute 5 name",
     "Attribute 5 value(s)",
+    "Attribute 5 visible",
+    "Attribute 5 global",
+
     "Attribute 6 name",
     "Attribute 6 value(s)",
+    "Attribute 6 visible",
+    "Attribute 6 global",
+
     "Regular price",
     "Stock",
     "In stock?",
@@ -484,16 +503,33 @@ def build_furniture_parent(
         "Parent": "",
         "Attribute 1 name": first_attribute_name,
         "Attribute 1 value(s)": ", ".join(sizes),
+        "Attribute 1 visible": 1,
+        "Attribute 1 global": 0,
+
         "Attribute 2 name": "Shipping",
         "Attribute 2 value(s)": "West Malaysia, East Malaysia",
+        "Attribute 2 visible": 1,
+        "Attribute 2 global": 0,
+
         "Attribute 3 name": "Material",
         "Attribute 3 value(s)": "Fabric",
+        "Attribute 3 visible": 1,
+        "Attribute 3 global": 0,
+
         "Attribute 4 name": "Series",
         "Attribute 4 value(s)": ", ".join(series_values),
+        "Attribute 4 visible": 1,
+        "Attribute 4 global": 0,
+
         "Attribute 5 name": "Variety",
         "Attribute 5 value(s)": ", ".join(variety_values),
+        "Attribute 5 visible": 1,
+        "Attribute 5 global": 0,
+
         "Attribute 6 name": "Color",
         "Attribute 6 value(s)": ", ".join(color_values),
+        "Attribute 6 visible": 1,
+        "Attribute 6 global": 1,
         "Regular price": "",
         "Stock": "",
         "In stock?": "",
@@ -592,16 +628,33 @@ def generate_sofa(
                         "Parent": parent_reference,
                         "Attribute 1 name": "Seater",
                         "Attribute 1 value(s)": size,
+                        "Attribute 1 visible": "",
+                        "Attribute 1 global": 0,
+
                         "Attribute 2 name": "Shipping",
                         "Attribute 2 value(s)": shipping,
+                        "Attribute 2 visible": "",
+                        "Attribute 2 global": 0,
+
                         "Attribute 3 name": "Material",
                         "Attribute 3 value(s)": "Fabric",
+                        "Attribute 3 visible": "",
+                        "Attribute 3 global": 0,
+
                         "Attribute 4 name": "Series",
                         "Attribute 4 value(s)": "Easy Clean",
+                        "Attribute 4 visible": "",
+                        "Attribute 4 global": 0,
+
                         "Attribute 5 name": "Variety",
                         "Attribute 5 value(s)": variety,
+                        "Attribute 5 visible": "",
+                        "Attribute 5 global": 0,
+
                         "Attribute 6 name": "Color",
                         "Attribute 6 value(s)": color,
+                        "Attribute 6 visible": "",
+                        "Attribute 6 global": 1,
                         "Regular price": price,
                         "Stock": 10,
                         "In stock?": 1,
@@ -766,16 +819,33 @@ def generate_bedframe(
                     "Parent": parent_reference,
                     "Attribute 1 name": "Size",
                     "Attribute 1 value(s)": size,
+                    "Attribute 1 visible": "",
+                    "Attribute 1 global": 0,
+
                     "Attribute 2 name": "Shipping",
                     "Attribute 2 value(s)": shipping,
+                    "Attribute 2 visible": "",
+                    "Attribute 2 global": 0,
+
                     "Attribute 3 name": "Material",
                     "Attribute 3 value(s)": "Fabric",
+                    "Attribute 3 visible": "",
+                    "Attribute 3 global": 0,
+
                     "Attribute 4 name": "Series",
                     "Attribute 4 value(s)": "Normal Fabric",
+                    "Attribute 4 visible": "",
+                    "Attribute 4 global": 0,
+
                     "Attribute 5 name": "Variety",
                     "Attribute 5 value(s)": "Normal Fabric",
+                    "Attribute 5 visible": "",
+                    "Attribute 5 global": 0,
+
                     "Attribute 6 name": "Color",
                     "Attribute 6 value(s)": "Normal Fabric",
+                    "Attribute 6 visible": "",
+                    "Attribute 6 global": 1,
                     "Regular price": (
                         normal_west_price
                         + shipping_surcharge
@@ -816,16 +886,33 @@ def generate_bedframe(
                             "Parent": parent_reference,
                             "Attribute 1 name": "Size",
                             "Attribute 1 value(s)": size,
+                            "Attribute 1 visible": "",
+                            "Attribute 1 global": 0,
+
                             "Attribute 2 name": "Shipping",
                             "Attribute 2 value(s)": shipping,
+                            "Attribute 2 visible": "",
+                            "Attribute 2 global": 0,
+
                             "Attribute 3 name": "Material",
                             "Attribute 3 value(s)": "Fabric",
+                            "Attribute 3 visible": "",
+                            "Attribute 3 global": 0,
+
                             "Attribute 4 name": "Series",
                             "Attribute 4 value(s)": "Easy Clean",
+                            "Attribute 4 visible": "",
+                            "Attribute 4 global": 0,
+
                             "Attribute 5 name": "Variety",
                             "Attribute 5 value(s)": variety,
+                            "Attribute 5 visible": "",
+                            "Attribute 5 global": 0,
+
                             "Attribute 6 name": "Color",
                             "Attribute 6 value(s)": color,
+                            "Attribute 6 visible": "",
+                            "Attribute 6 global": 1,
                             "Regular price": (
                                 easy_clean_west_price
                                 + shipping_surcharge
