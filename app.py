@@ -557,6 +557,10 @@ def generate_sofa(
         for item in size_data
     ]
 
+    # Parent keeps all colors selected in the tool.
+    # Variations intentionally leave Color blank, matching the
+    # working WooCommerce export. This lets the storefront's
+    # swatch/dependency logic filter colors after Variety is chosen.
     all_colors = []
 
     for variety in selected_varieties:
@@ -603,65 +607,60 @@ def generate_sofa(
                 else west_price + EAST_MALAYSIA_SURCHARGE
             )
 
+            # IMPORTANT: one variation per Variety, not per Color.
+            # This matches the known-good WordPress export.
             for variety in selected_varieties:
-                variety_colors = colors_by_variety.get(
-                    variety,
-                    [],
-                )
+                row = {
+                    "ID": get_id_value(
+                        id_mode,
+                        parent_id,
+                        variation_index,
+                    ),
+                    "Type": "variation",
+                    "SKU": "",
+                    "Name": name,
+                    "Published": 1,
+                    "Visibility in catalog": "visible",
+                    "Categories": "Sofa",
+                    "Parent": parent_reference,
 
-                # IMPORTANT:
-                # One real variation per specific Variety + Color.
-                # No blank "Any Color" variation.
-                for color in variety_colors:
-                    row = {
-                        "ID": get_id_value(
-                            id_mode,
-                            parent_id,
-                            variation_index,
-                        ),
-                        "Type": "variation",
-                        "SKU": "",
-                        "Name": name,
-                        "Published": 1,
-                        "Visibility in catalog": "visible",
-                        "Categories": "Sofa",
-                        "Parent": parent_reference,
-                        "Attribute 1 name": "Seater",
-                        "Attribute 1 value(s)": size,
-                        "Attribute 1 visible": "",
-                        "Attribute 1 global": 0,
+                    "Attribute 1 name": "Seater",
+                    "Attribute 1 value(s)": size,
+                    "Attribute 1 visible": "",
+                    "Attribute 1 global": 0,
 
-                        "Attribute 2 name": "Shipping",
-                        "Attribute 2 value(s)": shipping,
-                        "Attribute 2 visible": "",
-                        "Attribute 2 global": 0,
+                    "Attribute 2 name": "Shipping",
+                    "Attribute 2 value(s)": shipping,
+                    "Attribute 2 visible": "",
+                    "Attribute 2 global": 0,
 
-                        "Attribute 3 name": "Material",
-                        "Attribute 3 value(s)": "Fabric",
-                        "Attribute 3 visible": "",
-                        "Attribute 3 global": 0,
+                    "Attribute 3 name": "Material",
+                    "Attribute 3 value(s)": "Fabric",
+                    "Attribute 3 visible": "",
+                    "Attribute 3 global": 0,
 
-                        "Attribute 4 name": "Series",
-                        "Attribute 4 value(s)": "Easy Clean",
-                        "Attribute 4 visible": "",
-                        "Attribute 4 global": 0,
+                    "Attribute 4 name": "Series",
+                    "Attribute 4 value(s)": "Easy Clean",
+                    "Attribute 4 visible": "",
+                    "Attribute 4 global": 0,
 
-                        "Attribute 5 name": "Variety",
-                        "Attribute 5 value(s)": variety,
-                        "Attribute 5 visible": "",
-                        "Attribute 5 global": 0,
+                    "Attribute 5 name": "Variety",
+                    "Attribute 5 value(s)": variety,
+                    "Attribute 5 visible": "",
+                    "Attribute 5 global": 0,
 
-                        "Attribute 6 name": "Color",
-                        "Attribute 6 value(s)": color,
-                        "Attribute 6 visible": "",
-                        "Attribute 6 global": 1,
-                        "Regular price": price,
-                        "Stock": 10,
-                        "In stock?": 1,
-                    }
+                    "Attribute 6 name": "Color",
+                    "Attribute 6 value(s)": "",
+                    "Attribute 6 visible": "",
+                    "Attribute 6 global": 1,
 
-                    rows.append(row)
-                    variation_index += 1
+                    "Regular price": price,
+                    "Stock": 10,
+                    "In stock?": 1,
+                }
+
+                rows.append(row)
+                variation_index += 1
 
     return pd.DataFrame(
         rows,
@@ -699,41 +698,32 @@ def generate_bedframe(
         "Normal Fabric" in selected_series
     )
 
+    # Parent must list every selectable Variety.
     parent_varieties = []
 
     if include_easy_clean:
-        parent_varieties.extend(
-            selected_varieties
-        )
+        parent_varieties.extend(selected_varieties)
 
     if include_normal_fabric:
-        parent_varieties.append(
-            "Normal Fabric"
-        )
+        parent_varieties.append("Normal Fabric")
 
-    parent_varieties = unique_list(
-        parent_varieties
-    )
+    parent_varieties = unique_list(parent_varieties)
 
+    # Parent carries all Color terms. Variations leave Color blank,
+    # exactly like the known-good WordPress export.
     all_colors = []
 
     if include_easy_clean:
         for variety in selected_varieties:
             all_colors.extend(
-                colors_by_variety.get(
-                    variety,
-                    [],
-                )
+                colors_by_variety.get(variety, [])
             )
 
+    # User's requested Normal Fabric color code.
     if include_normal_fabric:
-        all_colors.append(
-            "Normal Fabric"
-        )
+        all_colors.append("Normal Fabric")
 
-    all_colors = unique_list(
-        all_colors
-    )
+    all_colors = unique_list(all_colors)
 
     parent_row = build_furniture_parent(
         product_type="Bedframe",
@@ -762,20 +752,9 @@ def generate_bedframe(
         size = item["size"]
         base_west_price = item["price"]
 
-        # -----------------------------------------------------
-        # PRICE RULE
-        #
-        # Normal only:
-        # pasted price = Normal Fabric price
-        #
-        # Easy Clean only:
-        # pasted price = Easy Clean price
-        #
-        # Normal + Easy Clean:
-        # pasted price = Normal Fabric price
-        # Easy Clean = pasted price + RM250
-        # -----------------------------------------------------
-
+        # Normal only: pasted price = Normal Fabric price
+        # Easy Clean only: pasted price = Easy Clean price
+        # Both selected: Easy Clean = Normal Fabric + RM250
         normal_west_price = base_west_price
 
         easy_clean_west_price = (
@@ -795,14 +774,8 @@ def generate_bedframe(
                 else EAST_MALAYSIA_SURCHARGE
             )
 
-            # -------------------------------------------------
-            # NORMAL FABRIC
-            # Material = Fabric
-            # Series = Normal Fabric
-            # Variety = Normal Fabric
-            # Color = Normal Fabric
-            # -------------------------------------------------
-
+            # Normal Fabric: one variation per size + shipping.
+            # Color is blank in the variation, matching the good export.
             if include_normal_fabric:
                 row = {
                     "ID": get_id_value(
@@ -817,6 +790,7 @@ def generate_bedframe(
                     "Visibility in catalog": "visible",
                     "Categories": "Bedframe",
                     "Parent": parent_reference,
+
                     "Attribute 1 name": "Size",
                     "Attribute 1 value(s)": size,
                     "Attribute 1 visible": "",
@@ -843,9 +817,10 @@ def generate_bedframe(
                     "Attribute 5 global": 0,
 
                     "Attribute 6 name": "Color",
-                    "Attribute 6 value(s)": "Normal Fabric",
+                    "Attribute 6 value(s)": "",
                     "Attribute 6 visible": "",
                     "Attribute 6 global": 1,
+
                     "Regular price": (
                         normal_west_price
                         + shipping_surcharge
@@ -857,72 +832,64 @@ def generate_bedframe(
                 rows.append(row)
                 variation_index += 1
 
-            # -------------------------------------------------
-            # EASY CLEAN
-            # Every selected Variety is linked only to its
-            # selected Colors.
-            # -------------------------------------------------
-
+            # Easy Clean: one variation per selected Variety.
+            # Do NOT create one variation per color.
             if include_easy_clean:
                 for variety in selected_varieties:
-                    variety_colors = colors_by_variety.get(
-                        variety,
-                        [],
-                    )
+                    row = {
+                        "ID": get_id_value(
+                            id_mode,
+                            parent_id,
+                            variation_index,
+                        ),
+                        "Type": "variation",
+                        "SKU": "",
+                        "Name": name,
+                        "Published": 1,
+                        "Visibility in catalog": "visible",
+                        "Categories": "Bedframe",
+                        "Parent": parent_reference,
 
-                    for color in variety_colors:
-                        row = {
-                            "ID": get_id_value(
-                                id_mode,
-                                parent_id,
-                                variation_index,
-                            ),
-                            "Type": "variation",
-                            "SKU": "",
-                            "Name": name,
-                            "Published": 1,
-                            "Visibility in catalog": "visible",
-                            "Categories": "Bedframe",
-                            "Parent": parent_reference,
-                            "Attribute 1 name": "Size",
-                            "Attribute 1 value(s)": size,
-                            "Attribute 1 visible": "",
-                            "Attribute 1 global": 0,
+                        "Attribute 1 name": "Size",
+                        "Attribute 1 value(s)": size,
+                        "Attribute 1 visible": "",
+                        "Attribute 1 global": 0,
 
-                            "Attribute 2 name": "Shipping",
-                            "Attribute 2 value(s)": shipping,
-                            "Attribute 2 visible": "",
-                            "Attribute 2 global": 0,
+                        "Attribute 2 name": "Shipping",
+                        "Attribute 2 value(s)": shipping,
+                        "Attribute 2 visible": "",
+                        "Attribute 2 global": 0,
 
-                            "Attribute 3 name": "Material",
-                            "Attribute 3 value(s)": "Fabric",
-                            "Attribute 3 visible": "",
-                            "Attribute 3 global": 0,
+                        "Attribute 3 name": "Material",
+                        "Attribute 3 value(s)": "Fabric",
+                        "Attribute 3 visible": "",
+                        "Attribute 3 global": 0,
 
-                            "Attribute 4 name": "Series",
-                            "Attribute 4 value(s)": "Easy Clean",
-                            "Attribute 4 visible": "",
-                            "Attribute 4 global": 0,
+                        "Attribute 4 name": "Series",
+                        "Attribute 4 value(s)": "Easy Clean",
+                        "Attribute 4 visible": "",
+                        "Attribute 4 global": 0,
 
-                            "Attribute 5 name": "Variety",
-                            "Attribute 5 value(s)": variety,
-                            "Attribute 5 visible": "",
-                            "Attribute 5 global": 0,
+                        "Attribute 5 name": "Variety",
+                        "Attribute 5 value(s)": variety,
+                        "Attribute 5 visible": "",
+                        "Attribute 5 global": 0,
 
-                            "Attribute 6 name": "Color",
-                            "Attribute 6 value(s)": color,
-                            "Attribute 6 visible": "",
-                            "Attribute 6 global": 1,
-                            "Regular price": (
-                                easy_clean_west_price
-                                + shipping_surcharge
-                            ),
-                            "Stock": 10,
-                            "In stock?": 1,
-                        }
+                        "Attribute 6 name": "Color",
+                        "Attribute 6 value(s)": "",
+                        "Attribute 6 visible": "",
+                        "Attribute 6 global": 1,
 
-                        rows.append(row)
-                        variation_index += 1
+                        "Regular price": (
+                            easy_clean_west_price
+                            + shipping_surcharge
+                        ),
+                        "Stock": 10,
+                        "In stock?": 1,
+                    }
+
+                    rows.append(row)
+                    variation_index += 1
 
     return pd.DataFrame(
         rows,
