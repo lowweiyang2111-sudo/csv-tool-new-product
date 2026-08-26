@@ -4,6 +4,28 @@ import pandas as pd
 
 
 # =========================================================
+# APP STATE VERSION
+# Forces Streamlit to refresh old saved widget selections once after updates.
+# This prevents an old Loro-only / Easy-Clean-only session from carrying over.
+# =========================================================
+
+APP_STATE_VERSION = "2026-08-26-v4"
+
+if st.session_state.get("_app_state_version") != APP_STATE_VERSION:
+    stale_keys = [
+        "bedframe_series",
+        "bedframe_varieties",
+        "bedframe_series_v4",
+        "bedframe_varieties_v4",
+        "sofa_varieties",
+        "sofa_varieties_v4",
+    ]
+    for _key in stale_keys:
+        st.session_state.pop(_key, None)
+    st.session_state["_app_state_version"] = APP_STATE_VERSION
+
+
+# =========================================================
 # BASIC SETTINGS
 # =========================================================
 
@@ -394,8 +416,11 @@ def clear_form():
         "bedframe_bulk",
         "mattress_bulk",
         "sofa_varieties",
+        "sofa_varieties_v4",
         "bedframe_varieties",
+        "bedframe_varieties_v4",
         "bedframe_series",
+        "bedframe_series_v4",
         "bedframe_sizes",
         "mattress_sizes",
         "visibility",
@@ -1169,7 +1194,7 @@ if product_type == "Sofa":
         "Choose Easy Clean Variety",
         EASY_CLEAN_VARIETIES,
         default=EASY_CLEAN_VARIETIES,
-        key="sofa_varieties",
+        key="sofa_varieties_v4",
     )
 
     sofa_colors_by_variety = render_variety_color_selectors(
@@ -1221,8 +1246,9 @@ elif product_type == "Bedframe":
         ],
         default=[
             "Easy Clean",
+            "Normal Fabric",
         ],
-        key="bedframe_series",
+        key="bedframe_series_v4",
     )
 
     if "Easy Clean" in selected_bedframe_series:
@@ -1232,7 +1258,7 @@ elif product_type == "Bedframe":
             "Choose Easy Clean Variety",
             EASY_CLEAN_VARIETIES,
             default=EASY_CLEAN_VARIETIES,
-            key="bedframe_varieties",
+            key="bedframe_varieties_v4",
         )
 
         bedframe_colors_by_variety = (
@@ -1576,6 +1602,13 @@ if generate_clicked:
                 parent_id=parent_id,
                 main_sku=main_sku,
             )
+
+        # Final stock safety check:
+        # every variation must have 10 units and be in stock.
+        # Parent variable rows intentionally remain unmanaged.
+        variation_mask = df["Type"].eq("variation")
+        df.loc[variation_mask, "Stock"] = 10
+        df.loc[variation_mask, "In stock?"] = 1
 
         csv_bytes = (
             df.to_csv(index=False)
